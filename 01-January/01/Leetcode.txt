@@ -1,0 +1,47 @@
+66. Plus One
+You are given a large integer represented as an integer array digits, where each digits[i] is the ith digit of the integer. The digits are ordered from most significant to least significant in left-to-right order. The large integer does not contain any leading 0's.
+
+Increment the large integer by one and return the resulting array of digits.
+________________________________________________________
+
+Code :
+
+class Solution {
+    public int[] plusOne(int[] digits) {
+        for (int i=digits.length-1 ; i>=0 ; i--) {
+            if (digits[i]<9) {
+                digits[i]++;
+                return digits;
+            }
+            digits[i] = 0;
+        }
+
+        digits = new int[digits.length+1];
+        digits[0] = 1;
+        return digits;
+    }
+}
+________________________________________________________
+
+
+Intuition :
+The problem requires adding 1 to a number represented as an array of digits. Since the number can be very large, converting it into an integer is not practical. Instead, we simulate the addition process digit by digit, similar to how manual addition works.
+
+We start from the least significant digit (rightmost):
+If a digit is less than 9, adding one does not create a carry, so we increment it and return the result.
+If a digit is 9, adding one turns it into 0 and generates a carry that moves to the next digit on the left.
+If all digits are 9 (for example, [9,9,9]), the carry propagates through the entire array, resulting in an extra digit at the front (for example, [1,0,0,0]).
+________________________________________________________
+
+Approach :
+Traverse the array from the last index (least significant digit) toward the first.
+For each digit:
+If the digit is less than 9, increment it and return the array immediately.
+If the digit is equal to 9, set it to 0 and continue to the next digit to propagate the carry.
+If the loop completes, it means all digits were 9.
+Create a new array of size n + 1, set the first element to 1, and return it.
+__________________________________________________________
+
+Complexity :
+Time complexity: O(n)
+Space complexity: O(1)

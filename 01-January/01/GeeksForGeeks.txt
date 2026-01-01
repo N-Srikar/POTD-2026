@@ -1,0 +1,49 @@
+Intersection in Y Shaped Lists
+You are given the heads of two non-empty singly linked lists, head1 and head2, that intersect at a certain point. Return that Node where these two linked lists intersect.
+
+Note: It is guaranteed that the intersected node always exists.
+
+In the custom input you have to give input for CommonList which pointed at the end of both head1 and head2 to form a Y-shaped linked list.
+
+________________________________________________________
+
+Code :
+class Solution {
+    public Node intersectPoint(Node head1, Node head2) {
+        Node a = head1;
+        Node b = head2;
+        while (a != b) {
+            a = a == null ? head2 : a.next;
+            b = b == null ? head1 : b.next;
+        }
+        return a;
+    }
+}
+_________________________________________________________
+
+Intuition :
+The two linked lists intersect at a common node, which means from that node onward, both lists share the same sequence of nodes.
+If we traverse both lists normally, they may not align at the same position because their lengths can be different.
+
+The key idea is to synchronize the traversal paths of both pointers so that they cover the same total distance. By switching each pointer to the head of the other list once it reaches the end, both pointers effectively traverse length(list1) + length(list2) nodes. This guarantees that they will meet at the intersection node.
+_________________________________________________________
+
+Approach :
+Initialize two pointers:
+a pointing to head1
+b pointing to head2
+
+Traverse both lists simultaneously:
+Move a to a.next and b to b.next
+
+When a pointer reaches the end of its list:
+Redirect it to the head of the other list
+
+Continue this process until a == b
+The meeting point is the intersection node
+Return the intersecting node
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(n + m)
+Space Complexity: O(1)
