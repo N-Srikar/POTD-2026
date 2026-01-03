@@ -1,0 +1,50 @@
+1411. Number of Ways to Paint N × 3 Grid
+You have a grid of size n x 3 and you want to paint each cell of the grid with exactly one of the three colors: Red, Yellow, or Green while making sure that no two adjacent cells have the same color (i.e., no two cells that share vertical or horizontal sides have the same color).
+
+Given n the number of rows of the grid, return the number of ways you can paint this grid. As the answer may grow large, the answer must be computed modulo 10^9 + 7.
+_______________________________________________________
+
+Code :
+class Solution {
+    public int numOfWays(int n) {
+        final int MOD=1000000007;
+        long x=6 , y=6;
+        
+        for (int i=2 ; i<=n ; i++) {
+            long new_x = (3*x + 2*y) % MOD;
+            long new_y = (2*x + 2*y) % MOD;
+            x = new_x;
+            y = new_y;
+        }
+        
+        return (int)( (x+y) % MOD);
+    }
+}
+______________________________________________________
+
+Intuition :
+Instead of thinking about all possible color combinations for the entire grid, observe that each row of 3 cells can only form two valid pattern types under the adjacency constraints.
+
+Alternating pattern (x): The first and third cells have the same color, and the middle cell is different (e.g., RYR, GYG). There are 6 such patterns.
+All-different pattern (y): All three cells have different colors (e.g., RGB, YGR). There are also 6 such patterns.
+These two pattern types fully describe all valid row colorings. The key insight is that when moving from one row to the next, the number of ways to form each pattern type depends only on the previous row’s pattern type, not on the exact colors used. This allows us to track just two values instead of all combinations.
+______________________________________________________
+
+Approach : 
+Define two variables:
+x: number of ways to paint a row using the alternating pattern.
+y: number of ways to paint a row using the all-different pattern.
+
+For the first row, initialize x = 6 and y = 6.
+For each subsequent row (from row 2 to n), update:
+new_x = 3 * x + 2 * y
+new_y = 2 * x + 2 * y
+(Apply modulo (10^9 + 7) at each step.)
+Update x and y with the new values.
+
+The final answer is x + y, representing all valid ways to paint the last row.
+__________________________________________________
+
+Complexity : 
+Time complexity: O(n)
+Space complexity: O(1)

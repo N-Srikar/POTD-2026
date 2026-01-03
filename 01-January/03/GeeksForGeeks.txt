@@ -1,0 +1,71 @@
+Flattening a Linked List
+Given a linked list containing n head nodes where every node in the linked list contains two pointers:
+(i) next points to the next node in the list.
+(ii) bottom points to a sub-linked list where the current node is the head.
+Each of the sub-linked lists nodes and the head nodes are sorted in ascending order based on their data. Flatten the linked list such that all the nodes appear in a single level while maintaining the sorted order.
+
+Note:
+1. ↓ represents the bottom pointer and → represents the next pointer.
+2. The flattened list will be printed using the bottom pointer instead of the next pointer.
+_______________________________________________________
+
+Code :
+class Solution {
+    public Node flatten(Node root) {
+        if (root == null || root.next == null) {
+            return root;
+        }
+
+        root.next = flatten(root.next);
+        root = merge(root, root.next);
+        return root;
+    }
+
+    private Node merge(Node a, Node b) {
+        if (a == null) return b;
+        if (b == null) return a;
+
+        Node result;
+        if (a.data < b.data) {
+            result = a;
+            result.bottom = merge(a.bottom, b);
+        } else {
+            result = b;
+            result.bottom = merge(a, b.bottom);
+        }
+
+        result.next = null;
+        return result;
+    }
+}
+_____________________________________________________
+
+Intuition :
+Each node in the linked list represents the head of a sorted sub-linked list (via the bottom pointer), and the main list formed by next pointers is also sorted.
+The problem is essentially about merging multiple sorted linked lists into one sorted list.
+
+Instead of flattening everything at once, we can flatten the list step by step by merging:
+the current list, and
+the already flattened version of the rest of the list.
+
+This is very similar to how merge sort works on linked lists.
+_______________________________________________________
+
+Approach :
+Base Case
+If the list is empty or there is only one head node, return it as it is.
+
+Recursive Flattening
+Recursively flatten the list starting from root.next.
+
+Merge Two Sorted Lists
+Merge the current node’s bottom list with the flattened list obtained from the right.
+The merge is done using the bottom pointer only.
+Ensure next pointers are ignored (set to null).
+
+Return the merged list, which remains sorted and uses only bottom pointers.
+____________________________________________________
+
+Complexity :
+Time Complexity: O(N)
+Space Complexity: O(k)
