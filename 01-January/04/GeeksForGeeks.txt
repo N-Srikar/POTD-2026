@@ -1,0 +1,63 @@
+Sort 0s, 1s and 2s
+Given an array arr[] containing only 0s, 1s, and 2s. Sort the array in ascending order.
+Note: You need to solve this problem without utilizing the built-in sort function.
+_______________________________________________________
+
+Code :
+class Solution {
+    public void sort012(int[] arr) {
+        int low = 0, mid = 0, high = arr.length - 1;
+
+        while (mid <= high) {
+            if (arr[mid] == 0) {
+                int temp = arr[low];
+                arr[low] = arr[mid];
+                arr[mid] = temp;
+                low++;
+                mid++;
+            } 
+            else if (arr[mid] == 1) {
+                mid++;
+            } 
+            else {
+                int temp = arr[mid];
+                arr[mid] = arr[high];
+                arr[high] = temp;
+                high--;
+            }
+        }
+    }
+}
+______________________________________________________
+
+Intuition :
+The array contains only three distinct values: 0, 1, and 2. Instead of sorting using a general-purpose algorithm, we can take advantage of this limited range.
+The idea is to place all 0s at the beginning, all 2s at the end, and keep 1s in the middle by scanning the array only once and swapping elements into their correct regions.
+_____________________________________________________
+
+Approach :
+Use the Dutch National Flag algorithm with three pointers:
+
+Initialize three pointers:
+low → position where the next 0 should go
+mid → current index being processed
+high → position where the next 2 should go
+
+Traverse the array while mid <= high:
+If arr[mid] == 0:
+Swap arr[mid] with arr[low]
+Increment both low and mid
+
+If arr[mid] == 1:
+Just move mid forward
+
+If arr[mid] == 2:
+Swap arr[mid] with arr[high]
+Decrement high (do not increment mid because the swapped element must be checked)
+
+When traversal ends, the array is sorted.
+______________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(1)
