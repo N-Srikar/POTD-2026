@@ -1,0 +1,52 @@
+Max Sum Subarray of size K
+Given an array of integers arr[]  and a number k. Return the maximum sum of a subarray of size k.
+Note: A subarray is a contiguous part of any given array.
+________________________________________________________
+
+Code :
+class Solution {
+    public int maxSubarraySum(int[] arr, int k) {
+        int n = arr.length;
+        int windowSum = 0;
+
+        for (int i = 0; i < k; i++) {
+            windowSum += arr[i];
+        }
+
+        int maxSum = windowSum;
+
+        for (int i = k; i < n; i++) {
+            windowSum += arr[i] - arr[i - k];
+            maxSum = Math.max(maxSum, windowSum);
+        }
+
+        return maxSum;
+    }
+}
+_______________________________________________________
+
+Intuition :
+The problem asks for the maximum sum of any contiguous subarray of fixed size k.
+Instead of recalculating the sum for every possible subarray (which would be inefficient), we can reuse the previous sum by removing the element that goes out of the window and adding the new element that enters.
+This leads naturally to the sliding window technique.
+_______________________________________________________
+
+Approach :
+Compute the sum of the first k elements of the array.
+This represents the sum of the first window.
+
+Initialize maxSum with this initial window sum.
+
+Slide the window from left to right:
+Subtract the element leaving the window.
+Add the element entering the window.
+Update maxSum if the current window sum is larger.
+
+Continue until all possible windows of size k are processed.
+
+Return maxSum.
+_____________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(1)
