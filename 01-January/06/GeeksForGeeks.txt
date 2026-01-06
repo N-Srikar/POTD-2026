@@ -1,0 +1,59 @@
+Max Xor Subarray of size K
+Given an array of integers arr[]  and a number k. Return the maximum xor of a subarray of size k.
+Note: A subarray is a contiguous part of any given array.
+________________________________________________________
+
+Code :
+class Solution {
+    public int maxSubarrayXOR(int[] arr, int k) {
+        int n = arr.length;
+        int windowXor = 0;
+
+        for (int i = 0; i < k; i++) {
+            windowXor ^= arr[i];
+        }
+
+        int maxXor = windowXor;
+
+        for (int i = k; i < n; i++) {
+            windowXor ^= arr[i - k];
+            windowXor ^= arr[i];
+            maxXor = Math.max(maxXor, windowXor);
+        }
+
+        return maxXor;
+    }
+}
+_______________________________________________________
+
+Intuition :
+The problem asks for the maximum XOR value among all contiguous subarrays of fixed size k.
+Just like sum-based window problems, recalculating the XOR for every subarray from scratch would be inefficient.
+
+The key observation is that XOR is reversible:
+a ^ a = 0
+x ^ 0 = x
+
+So, when sliding the window:
+We can remove the effect of the outgoing element using XOR.
+We can add the incoming element using XOR.
+
+This allows us to compute the XOR of each window in constant time after the first window.
+________________________________________________________
+
+Approach :
+Compute the XOR of the first k elements of the array.
+Store this as the initial maxXor.
+
+Slide the window from left to right:
+Remove the element going out of the window using XOR.
+Add the element coming into the window using XOR.
+Update maxXor if the current window XOR is greater.
+
+Continue until all subarrays of size k are processed.
+Return maxXor.
+________________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(1)
