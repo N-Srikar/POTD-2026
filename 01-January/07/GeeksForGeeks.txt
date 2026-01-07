@@ -1,0 +1,53 @@
+Count distinct elements in every window
+Given an integer array arr[] and a number k. Find the count of distinct elements in every window of size k in the array.
+_______________________________________________________
+
+Code :
+class Solution {
+    ArrayList<Integer> countDistinct(int arr[], int k) {
+        int n = arr.length;
+        ArrayList<Integer> ans = new ArrayList<>();
+        HashMap<Integer, Integer> map = new HashMap<>();
+
+        for (int i = 0; i < k; i++) {
+            map.put(arr[i], map.getOrDefault(arr[i], 0) + 1);
+        }
+        ans.add(map.size());
+
+        for (int i = k; i < n; i++) {
+            int out = arr[i - k];
+            int freq = map.get(out) - 1;
+            if (freq == 0) map.remove(out);
+            else map.put(out, freq);
+
+            map.put(arr[i], map.getOrDefault(arr[i], 0) + 1);
+            ans.add(map.size());
+        }
+        return ans;
+    }
+}
+_______________________________________________________
+
+Intuition :
+For each window of size k, we need to know how many unique elements are present.
+Recomputing distinct elements from scratch for every window would be inefficient.
+Instead, we can maintain the frequency of elements in the current window and update it as the window slides.
+_______________________________________________________
+
+Approach :
+Use a HashMap to store the frequency of elements in the current window.
+Initialize the map using the first k elements of the array.
+Store the size of the map (number of distinct elements) as the answer for the first window.
+
+Slide the window from left to right:
+Decrease the frequency of the element going out of the window.
+If its frequency becomes 0, remove it from the map.
+Increase the frequency of the new element entering the window.
+Record the current size of the map.
+
+Continue until all windows are processed.
+______________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(k)
