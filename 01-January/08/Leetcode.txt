@@ -1,0 +1,64 @@
+1458. Max Dot Product of Two Subsequences
+Given two arrays nums1 and nums2.
+
+Return the maximum dot product between non-empty subsequences of nums1 and nums2 with the same length.
+
+A subsequence of a array is a new array which is formed from the original array by deleting some (can be none) of the characters without disturbing the relative positions of the remaining characters. (ie, [2,3,5] is a subsequence of [1,2,3,4,5] while [1,5,3] is not).
+________________________________________________________
+
+Code :
+class Solution {
+    public int maxDotProduct(int[] nums1, int[] nums2) {
+        int n = nums1.length;
+        int m = nums2.length;
+        
+        int[][] dp = new int[n + 1][m + 1];
+        
+        for (int i = 0; i <= n; i++) {
+            for (int j = 0; j <= m; j++) {
+                dp[i][j] = -10000000; 
+            }
+        }
+
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= m; j++) {
+                int product = nums1[i - 1] * nums2[j - 1];
+     
+                dp[i][j] = Math.max(product, Math.max(dp[i - 1][j - 1] + product, Math.max(dp[i - 1][j], dp[i][j - 1])));
+            }
+        }
+        
+        return dp[n][m];
+    }
+}
+_______________________________________________________
+
+Intuition :
+The problem asks for the maximum dot product of two non-empty subsequences of equal length from two arrays.
+Because elements can be skipped independently in both arrays and the values can be negative, greedy strategies fail choosing locally optimal pairs may block better global combinations.
+
+This makes the problem well-suited for Dynamic Programming, where we systematically explore all valid subsequence combinations while preserving order. By building solutions for smaller prefixes of the arrays, we ensure that the final result is optimal even in the presence of negative values.
+________________________________________________________
+
+Approach :
+Use a 2D DP table where:
+dp[i][j] represents the maximum dot product using the first i elements of nums1 and the first j elements of nums2.
+
+Initialize all DP values to a very small negative number to correctly handle cases where all products are negative and to enforce the requirement of a non-empty subsequence.
+
+For each pair (i, j):
+Compute product = nums1[i - 1] * nums2[j - 1].
+
+Update dp[i][j] as the maximum of:
+Starting a new subsequence with the current pair: product
+Extending an existing subsequence: dp[i - 1][j - 1] + product
+Skipping the current element from nums1: dp[i - 1][j]
+Skipping the current element from nums2: dp[i][j - 1]
+
+Fill the table row by row until all states are computed.
+The final answer is stored in dp[n][m], representing the maximum dot product using the full arrays.
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(n × m)
+Space Complexity: O(n × m)

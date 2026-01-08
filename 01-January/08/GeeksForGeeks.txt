@@ -1,0 +1,53 @@
+Count Subarray with k odds
+You are given an array arr[] of positive integers and an integer k. 
+You have to count the number of subarrays that contain exactly k odd numbers.
+________________________________________________________
+
+Code :
+class Solution {
+    public int countSubarrays(int[] arr, int k) {
+        return atMost(arr, k) - atMost(arr, k - 1);
+    }
+
+    private int atMost(int[] arr, int k) {
+        int left = 0, count = 0;
+        for (int right = 0; right < arr.length; right++) {
+            if (arr[right] % 2 == 1) k--;
+
+            while (k < 0) {
+                if (arr[left] % 2 == 1) k++;
+                left++;
+            }
+            count += right - left + 1;
+        }
+        return count;
+    }
+}
+______________________________________________________
+
+Intuition :
+We are asked to count subarrays that contain exactly k odd numbers.
+Instead of checking every subarray (which would be inefficient), we can use a sliding window + prefix idea.
+
+The key observation is:
+If we can count subarrays with at most k odd numbers
+And also count subarrays with at most k-1 odd numbers
+Then the difference of these two counts gives the number of subarrays with exactly k odd numbers
+______________________________________________________
+
+Approach :
+Define a helper function atMost(k) that counts subarrays with at most k odd numbers.
+
+Use a sliding window:
+Expand the window with a right pointer.
+Decrease k when an odd number enters the window.
+Shrink the window from the left when k becomes negative.
+Add the number of valid subarrays ending at the current index.
+
+The final answer is : atMost(k) - atMost(k - 1)
+which gives subarrays with exactly k odd numbers.
+______________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(1)
