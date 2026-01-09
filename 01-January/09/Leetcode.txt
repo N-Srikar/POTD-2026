@@ -1,0 +1,46 @@
+865. Smallest Subtree with all the Deepest Nodes
+Given the root of a binary tree, the depth of each node is the shortest distance to the root.
+Return the smallest subtree such that it contains all the deepest nodes in the original tree.
+
+A node is called the deepest if it has the largest depth possible among any node in the entire tree.
+The subtree of a node is a tree consisting of that node, plus the set of all descendants of that node.
+_______________________________________________________
+
+Code :
+class Solution {
+    public TreeNode subtreeWithAllDeepest(TreeNode root) {
+        if(root == null)
+            return null;
+        
+        if(checkHeight(root.left) == checkHeight(root.right))
+            return root;
+        else if(checkHeight(root.left) > checkHeight(root.right))
+            return subtreeWithAllDeepest(root.left);
+        else
+            return subtreeWithAllDeepest(root.right);    
+    }
+    
+    private int checkHeight(TreeNode root){
+        if(root == null) return 0;
+        int res = Math.max(checkHeight(root.left), checkHeight(root.right))+1;
+        return res;
+    }
+}
+_______________________________________________________
+
+Intuition :
+The deepest nodes of a binary tree are those located at the maximum depth. The smallest subtree that contains all these deepest nodes must have a root that lies on the paths to all of them. If the deepest nodes appear in both the left and right subtrees of a node, then that node itself is the answer. If they appear only on one side, the required subtree must lie entirely within that deeper subtree.
+_______________________________________________________
+
+Approach :
+Define a helper function to compute the height of a subtree.
+For the current node, compare the heights of its left and right subtrees.
+If both heights are equal, the current node is the smallest subtree containing all deepest nodes.
+If the left subtree is deeper, recursively search in the left subtree.
+If the right subtree is deeper, recursively search in the right subtree.
+Continue this process until the correct subtree root is found.
+_______________________________________________________
+
+Complexity :
+Time complexity: O(n^2)
+Space complexity: O(n)
