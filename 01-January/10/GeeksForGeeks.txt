@@ -1,0 +1,62 @@
+Substrings with K Distinct
+You are given a string s consisting of lowercase characters and an integer k, You have to count all possible substrings that have exactly k distinct characters.
+_______________________________________________________
+
+Code :
+class Solution {
+    public int countSubstr(String s, int k) {
+        return atMost(s, k) - atMost(s, k - 1);
+    }
+
+    private int atMost(String s, int k) {
+        int left = 0, count = 0;
+        int[] freq = new int[26];
+
+        for (int right = 0; right < s.length(); right++) {
+            if (freq[s.charAt(right) - 'a']++ == 0) {
+                k--;
+            }
+
+            while (k < 0) {
+                if (--freq[s.charAt(left) - 'a'] == 0) {
+                    k++;
+                }
+                left++;
+            }
+
+            count += right - left + 1;
+        }
+        return count;
+    }
+}
+______________________________________________________
+
+Intuition :
+The problem requires counting substrings with exactly k distinct characters.
+Directly counting such substrings is difficult, but we can simplify the task using an important observation:
+
+Substrings with exactly k distinct characters
+= Substrings with at most k distinct characters − Substrings with at most k - 1 distinct characters
+
+This allows us to reduce the problem to counting substrings with at most k distinct characters, which can be efficiently solved using a sliding window.
+_______________________________________________________
+
+Approach :
+Define a helper function atMost(k) that counts substrings with at most k distinct characters.
+
+In atMost(k):
+Use a sliding window with two pointers left and right.
+Maintain a frequency map of characters in the current window.
+Expand the window by moving right.
+If the number of distinct characters exceeds k, shrink the window from the left until it becomes valid.
+At each step, add right - left + 1 to the count (all valid substrings ending at right).
+
+Compute:
+atMost(k) - atMost(k - 1)
+
+Return the result.
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(1)

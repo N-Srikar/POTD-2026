@@ -1,0 +1,70 @@
+712. Minimum ASCII Delete Sum for Two Strings
+Given two strings s1 and s2, return the lowest ASCII sum of deleted characters to make two strings equal.
+_______________________________________________________
+
+Code :
+class Solution {
+    int[][] dp;
+
+    public int minimumDeleteSum(String s1, String s2) {
+        dp = new int[s1.length() + 1][s2.length() + 1];
+        for (int[] row : dp) {
+            Arrays.fill(row, -1);
+        }
+        return solve(s1, s2, 0, 0);
+    }
+
+    private int solve(String s1, String s2, int i, int j) {
+        if (dp[i][j] != -1)
+            return dp[i][j];
+        if (i == s1.length()) {
+            int sum = 0;
+            for (int k = j; k < s2.length(); k++) {
+                sum += s2.charAt(k);
+            }
+            return sum;
+        }
+        if (j == s2.length()) {
+            int sum = 0;
+            for (int k = i; k < s1.length(); k++) {
+                sum += s1.charAt(k);
+            }
+            return sum;
+        }
+        int nt = Math.min(s1.charAt(i) + solve(s1, s2, i + 1, j), s2.charAt(j) + solve(s1, s2, i, j + 1));
+        int tk = Integer.MAX_VALUE;
+        if (s1.charAt(i) == s2.charAt(j)) {
+            tk = solve(s1, s2, i + 1, j + 1);
+        }
+        return dp[i][j] = Math.min(nt, tk);
+    }
+}
+_______________________________________________________
+
+Intuition :
+To make two strings equal, we may need to delete some characters from either string. Each deletion costs the ASCII value of the deleted character, so the goal is to minimize the total deletion cost. At every position, we must decide whether to delete a character from the first string, delete a character from the second string, or keep both characters if they are equal. 
+Since these decisions depend on future characters and overlapping subproblems arise, Dynamic Programming is the natural choice.
+_______________________________________________________
+
+Approach :
+Use a 2D DP table where dp[i][j] represents the minimum ASCII delete sum required to make the substrings s1[i:] and s2[j:] equal.
+
+Define a recursive function solve(i, j):
+If the result for (i, j) is already computed, return it.
+
+Base cases:
+If i reaches the end of s1, delete all remaining characters in s2 and return their ASCII sum.
+If j reaches the end of s2, delete all remaining characters in s1 and return their ASCII sum.
+
+For the general case:
+Option 1: Delete s1[i] and add its ASCII value to solve(i + 1, j).
+Option 2: Delete s2[j] and add its ASCII value to solve(i, j + 1).
+If s1[i] == s2[j], also consider keeping both characters and move to solve(i + 1, j + 1) with no extra cost.
+
+Take the minimum among the valid options, store it in dp[i][j], and return it.
+The final answer is solve(0, 0).
+_______________________________________________________
+
+Complexity :
+Time complexity: O(n1 x n2)
+Space complexity: O(n1 x n2)
