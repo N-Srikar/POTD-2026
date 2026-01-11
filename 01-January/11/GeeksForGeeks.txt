@@ -1,0 +1,87 @@
+Minimum Window Subsequence
+You are given two strings, s1 and s2. Your task is to find the smallest substring in s1 such that s2 appears as a subsequence within that substring.
+
+The characters of s2 must appear in the same sequence within the substring of s1.
+If there are multiple valid substrings of the same minimum length, return the one that appears first in s1.
+If no such substring exists, return an empty string.
+
+Note: Both the strings contain only lowercase english letters.
+________________________________________________________
+
+Code :
+class Solution {
+    public String minWindow(String s1, String s2) {
+        int n = s1.length(), m = s2.length();
+        int minLen = Integer.MAX_VALUE;
+        int start = -1;
+
+        int i = 0;
+        while (i < n) {
+            int j = 0;
+
+            while (i < n) {
+                if (s1.charAt(i) == s2.charAt(j)) {
+                    j++;
+                    if (j == m) break;
+                }
+                i++;
+            }
+
+            if (j < m) break;
+
+            int end = i;
+            j = m - 1;
+            while (i >= 0) {
+                if (s1.charAt(i) == s2.charAt(j)) {
+                    j--;
+                    if (j < 0) break;
+                }
+                i--;
+            }
+
+            int windowLen = end - i + 1;
+            if (windowLen < minLen) {
+                minLen = windowLen;
+                start = i;
+            }
+
+            i = i + 1;
+        }
+
+        return start == -1 ? "" : s1.substring(start, start + minLen);
+    }
+}
+______________________________________________________
+
+Intuition :
+The problem asks for the smallest substring of s1 in which s2 appears as a subsequence (not necessarily contiguous).
+Unlike the classic “minimum window substring” problem, here the order matters, but characters of s2 can be scattered within the window.
+
+A good strategy is:
+First, scan forward in s1 to check when s2 can be matched as a subsequence.
+Once matched, shrink the window from the left as much as possible while still keeping s2 as a subsequence.
+Repeat this process to find the minimum-length valid window.
+This greedy forward + backward scanning ensures correctness while keeping the solution efficient.
+_______________________________________________________
+
+Approach :
+Initialize pointers:
+i for traversing s1
+j for traversing s2
+
+Traverse s1 from left to right:
+If s1[i] == s2[j], move j forward.
+When j reaches the end of s2, a valid window ending at i is found.
+
+Now shrink the window from the left:
+Move backward from i, matching characters of s2 in reverse order.
+Stop when the first character of s2 is matched.
+
+Compute the window length and update the answer if it is smaller than the previous best.
+Reset j to 0 and continue scanning from the next position after the window’s start.
+If no valid window is found, return an empty string.
+______________________________________________________
+
+Complexity :
+Time Complexity: O(n × m)
+Space Complexity: O(1)
