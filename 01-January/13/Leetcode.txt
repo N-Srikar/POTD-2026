@@ -1,0 +1,76 @@
+3453. Separate Squares I
+You are given a 2D integer array squares. Each squares[i] = [xi, yi, li] represents the coordinates of the bottom-left point and the side length of a square parallel to the x-axis.
+
+Find the minimum y-coordinate value of a horizontal line such that the total area of the squares above the line equals the total area of the squares below the line.
+
+Answers within 10-5 of the actual answer will be accepted.
+
+Note: Squares may overlap. Overlapping areas should be counted multiple times.
+_______________________________________________________
+
+Code :
+class Solution {
+    public double separateSquares(int[][] squares) {
+        double lo = 0, hi = 2*1e9;
+        for (int i = 0; i < 60; i++) {
+            double mid = (lo + hi) / 2.0;
+            double diff = solve(mid, squares);
+            
+            if (diff > 0)
+                lo = mid;
+            else
+                hi = mid;
+        }
+        return hi;
+    }
+
+    private double solve(double line, int[][] squares) {
+        double above = 0, below = 0;
+        for (int i = 0; i < squares.length; i++) {
+            int x = squares[i][0], y = squares[i][1], l = squares[i][2];
+            double total = (double) l * l;
+            
+            if (line <= y) {
+                above += total;
+            } 
+            else if (line >= y + l) {
+                below += total;
+            } 
+            else {
+                double aboveHeight = (y + l) - line;
+                double belowHeight = line - y;
+                above += l * aboveHeight;
+                below += l * belowHeight;
+            }
+        }
+        return above - below;
+    }
+}
+_______________________________________________________
+
+Intuition :
+We are looking for a horizontal line such that the total area of all square regions above the line equals the total area below it. As the line moves upward, more area shifts from above to below, making the difference (area above − area below) change monotonically. Because this relationship is continuous and monotonic, we can use binary search on the y-coordinate to efficiently find the balance point where this difference becomes zero.
+______________________________________________________
+
+Approach :
+Define the search range for the horizontal line as [0, 2 × 10^9], which safely covers all possible square positions.
+Use binary search on this range to find the y-coordinate where the area above the line equals the area below it.
+
+For a given candidate line:
+Iterate through all squares.
+If the line is completely below a square, add the full square area to the area above.
+If the line is completely above a square, add the full square area to the area below.
+If the line cuts through a square, split its area proportionally between above and below.
+
+Compute the difference (area above − area below):
+If the difference is positive, move the search upward.
+If the difference is negative, move the search downward.
+
+Repeat the binary search for a fixed number of iterations to ensure sufficient precision.
+
+Return the final y-coordinate.
+______________________________________________________
+
+Complexity :
+Time complexity: O(n)
+Space complexity: O(1)
