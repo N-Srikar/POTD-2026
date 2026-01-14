@@ -1,0 +1,78 @@
+Police and Thieves
+Given an array arr[], where each element contains either a 'P' for policeman or a 'T' for thief. Find the maximum number of thieves that can be caught by the police. 
+
+Keep in mind the following conditions :
+Each policeman can catch only one thief.
+A policeman cannot catch a thief who is more than k units away from him.
+_______________________________________________________
+
+Code :
+class Solution {
+    public int catchThieves(char[] arr, int k) {
+        ArrayList<Integer> police = new ArrayList<>();
+        ArrayList<Integer> thieves = new ArrayList<>();
+
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == 'P') police.add(i);
+            else if (arr[i] == 'T') thieves.add(i);
+        }
+
+        int i = 0, j = 0, count = 0;
+
+        while (i < police.size() && j < thieves.size()) {
+            if (Math.abs(police.get(i) - thieves.get(j)) <= k) {
+                count++;
+                i++;
+                j++;
+            } 
+            else if (thieves.get(j) < police.get(i)) {
+                j++;
+            } 
+            else {
+                i++;
+            }
+        }
+
+        return count;
+    }
+}
+_______________________________________________________
+
+Intuition :
+Each policeman can catch at most one thief, and only if the thief is within a distance of k.
+Since both policemen and thieves are positioned linearly in the array, the goal is to pair them optimally so that the total number of catches is maximized.
+
+A greedy strategy works best here:
+Always match the nearest possible policeman and thief within distance k.
+Once matched, neither can be used again.
+
+This naturally leads to a two-pointer technique after separating the positions of policemen and thieves.
+_______________________________________________________
+
+Approach :
+Traverse the array and store:
+Indices of all policemen in one list.
+Indices of all thieves in another list.
+
+Use two pointers:
+One pointer for the policemen list.
+One pointer for the thieves list.
+
+While both pointers are within bounds:
+If the distance between the current policeman and thief is ≤ k:
+Count it as a successful catch.
+Move both pointers forward.
+
+If the thief is too far left:
+Move the thief pointer forward.
+
+If the policeman is too far left:
+Move the policeman pointer forward.
+
+Continue until one list is exhausted.
+Return the total count of successful catches.
+________________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(n)

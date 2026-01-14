@@ -1,0 +1,196 @@
+3454. Separate Squares II
+You are given a 2D integer array squares. Each squares[i] = [xi, yi, li] represents the coordinates of the bottom-left point and the side length of a square parallel to the x-axis.
+
+Find the minimum y-coordinate value of a horizontal line such that the total area covered by squares above the line equals the total area covered by squares below the line.
+
+Answers within 10-5 of the actual answer will be accepted.
+
+Note: Squares may overlap. Overlapping areas should be counted only once in this version.
+______________________________________________________
+
+Code :
+class Solution {
+    static final class Event {
+        final long y;
+        final int l, r;
+        final int delta;
+        Event(long y, int l, int r, int delta) { this.y = y; this.l = l; this.r = r; this.delta = delta; }
+    }
+
+    static final class SegTree {
+        final long[] xs;
+        final long[] cover;
+        final int[] cnt;
+
+        SegTree(long[] xs) {
+            this.xs = xs;
+            int n = Math.max(1, xs.length - 1);
+            this.cover = new long[n << 2];
+            this.cnt = new int[n << 2];
+        }
+
+        long covered() { return cover[1]; }
+        void update(int l, int r, int delta) {
+            if (l >= r) return;
+            update(1, 0, xs.length - 1, l, r, delta);
+        }
+
+        private void update(int node, int L, int R, int ql, int qr, int delta) {
+            if (qr <= L || R <= ql) return;
+            if (ql <= L && R <= qr) {
+                cnt[node] += delta;
+                pushUp(node, L, R);
+                return;
+            }
+            int mid = (L + R) >>> 1;
+            update(node << 1, L, mid, ql, qr, delta);
+            update(node << 1 | 1, mid, R, ql, qr, delta);
+            pushUp(node, L, R);
+        }
+
+        private void pushUp(int node, int L, int R) {
+            if (cnt[node] > 0) {
+                cover[node] = xs[R] - xs[L];
+            } else if (L + 1 == R) {
+                cover[node] = 0;
+            } else {
+                cover[node] = cover[node << 1] + cover[node << 1 | 1];
+            }
+        }
+    }
+
+    public double separateSquares(int[][] squares) {
+        int n = squares.length;
+        if (n == 0) return -1;
+
+        long[] xs = new long[2 * n];
+        int p = 0;
+        for (int[] s : squares) {
+            long x1 = s[0];
+            long x2 = (long) s[0] + s[2];
+            xs[p++] = x1;
+            xs[p++] = x2;
+        }
+        Arrays.sort(xs);
+        int m = 1;
+        for (int i = 1; i < xs.length; i++) {
+            if (xs[i] != xs[m - 1]) xs[m++] = xs[i];
+        }
+        xs = Arrays.copyOf(xs, m);
+        if (xs.length < 2) {
+            long minY = Long.MAX_VALUE;
+            for (int[] s : squares) minY = Math.min(minY, (long) s[1]);
+            return (double) minY;
+        }
+
+        Event[] events = new Event[2 * n];
+        int e = 0;
+        for (int[] s : squares) {
+            long x1 = s[0];
+            long x2 = (long) s[0] + s[2];
+            long y1 = s[1];
+            long y2 = (long) s[1] + s[2];
+            int l = lowerBound(xs, x1);
+            int r = lowerBound(xs, x2);
+            if (l < r) {
+                events[e++] = new Event(y1, l, r, +1);
+                events[e++] = new Event(y2, l, r, -1);
+            }
+        }
+        if (e == 0) return -1;
+        events = Arrays.copyOf(events, e);
+        Arrays.sort(events, (a, b) -> Long.compare(a.y, b.y));
+
+        SegTree st = new SegTree(xs);
+
+        long[] sY = new long[e];
+        long[] eY = new long[e];
+        long[] base = new long[e];
+        int gi = 0;
+
+        long area = 0;
+        long prevY = events[0].y;
+        long baseLen = 0;
+        int i = 0;
+        while (i < e) {
+            long currY = events[i].y;
+            long dy = currY - prevY;
+            if (dy != 0 && baseLen != 0) {
+                area += baseLen * dy;
+                sY[gi] = prevY;
+                eY[gi] = currY;
+                base[gi] = baseLen;
+                gi++;
+            }
+            int j = i;
+            while (j < e && events[j].y == currY) {
+                st.update(events[j].l, events[j].r, events[j].delta);
+                j++;
+            }
+            baseLen = st.covered();
+            prevY = currY;
+            i = j;
+        }
+
+        if (area == 0) return prevY;
+        double target = area / 2.0;
+        long pref = 0;
+        for (int k = 0; k < gi; k++) {
+            long a = base[k] * (eY[k] - sY[k]);
+            if (pref + a < target) {
+                pref += a;
+            } else {
+                double remain = target - pref;
+                return sY[k] + remain / base[k];
+            }
+        }
+        return prevY;
+    }
+
+    private static int lowerBound(long[] a, long key) {
+        int lo = 0, hi = a.length;
+        while (lo < hi) {
+            int mid = (lo + hi) >>> 1;
+            if (a[mid] < key) lo = mid + 1;
+            else hi = mid;
+        }
+        return lo;
+    }
+}
+_______________________________________________________
+
+Intuition :
+We need to find the smallest y-coordinate such that the union area of all squares below the horizontal line equals the union area above it. Unlike the previous version, overlapping regions must be counted only once, which means we must work with the union of intervals, not raw summed areas.
+
+As a horizontal line moves upward, the area below it increases monotonically. This monotonic behavior allows us to sweep the plane vertically, compute the union width of active squares in each horizontal slab, accumulate the covered area, and stop once we reach half of the total union area.
+_______________________________________________________
+
+Approach :
+For each square, create two sweep-line events:
+A start event at y = bottom that adds its x-interval.
+An end event at y = top that removes its x-interval.
+
+Compress all x-coordinates to allow efficient interval handling.
+Sort all events by their y-coordinate.
+
+Sweep from bottom to top:
+Maintain active x-intervals using a segment tree that tracks the union length on the x-axis.
+
+For each vertical slab between consecutive y-values:
+Compute its height.
+Multiply height by current union width to get slab area.
+Accumulate total union area and store slab information.
+
+Once the total union area is known, compute half_area = total_area / 2.
+
+Traverse the stored slabs and accumulate area until crossing half_area.
+
+The answer lies within that slab; compute it using linear interpolation: 
+y = slab_start + (half_area - accumulated_area) / slab_width
+
+Return this y-coordinate.
+_______________________________________________________
+
+Complexity :
+Time complexity: O(nlogn)
+Space complexity: O(n)
