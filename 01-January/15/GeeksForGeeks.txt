@@ -1,0 +1,78 @@
+Candy
+There are n children standing in a line. Each child is assigned a rating value given in the integer array arr[]. 
+
+You are giving candies to these children subjected to the following requirements:
+Each child must have at least one candy.
+Children with a higher rating than their neighbors get more candies than their neighbors.
+Return the minimum number of candies you need to have to distribute.
+
+Note: The answer will always fit into a 32-bit integer.
+________________________________________________________
+
+Code :
+class Solution {
+    public int minCandy(int arr[]) {
+        int n = arr.length;
+        int[] candies = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            candies[i] = 1;
+        }
+
+        for (int i = 1; i < n; i++) {
+            if (arr[i] > arr[i - 1]) {
+                candies[i] = candies[i - 1] + 1;
+            }
+        }
+
+        for (int i = n - 2; i >= 0; i--) {
+            if (arr[i] > arr[i + 1]) {
+                candies[i] = Math.max(candies[i], candies[i + 1] + 1);
+            }
+        }
+
+        int sum = 0;
+        for (int c : candies) {
+            sum += c;
+        }
+
+        return sum;
+    }
+}
+
+________________________________________________________
+
+Intuition :
+Each child must receive at least one candy, and children with a higher rating than their neighbors must receive more candies than those neighbors.
+The challenge is to satisfy both left and right neighbor conditions while keeping the total number of candies minimum.
+
+A single pass is not sufficient because:
+Comparing only with the left neighbor may violate the right neighbor condition.
+Comparing only with the right neighbor may violate the left neighbor condition.
+
+So, we handle both directions separately and then combine the results.
+_______________________________________________________
+
+Approach :
+Create an array candies[] of size n and initialize all values to 1.
+
+Left to Right pass:
+If arr[i] > arr[i-1], then candies[i] = candies[i-1] + 1
+
+Right to Left pass:
+If arr[i] > arr[i+1], then
+candies[i] = max(candies[i], candies[i+1] + 1)
+
+Sum all values in the candies[] array.
+
+Return the total sum.
+
+This ensures:
+Every child has at least one candy.
+Both left and right neighbor constraints are satisfied.
+The total candies used are minimum.
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(n)
