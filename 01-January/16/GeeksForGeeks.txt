@@ -1,0 +1,96 @@
+Minimum Number of Workers
+You are given an array arr[], where arr[i] denotes the range of working hours a person at position i can cover.
+If arr[i] ≠ -1, the person at index i can work and cover the time interval [i - arr[i], i + arr[i]].
+If arr[i] = -1, the person is unavailable and cannot cover any time.
+
+The task is to find the minimum number of people required to cover the entire working day from 0 to n - 1. 
+If it is not possible to fully cover the day, return -1.
+_______________________________________________________
+
+Code :
+class Solution {
+    public int minMen(int arr[]) {
+        int n = arr.length;
+        ArrayList<int[]> intervals = new ArrayList<>();
+
+        for (int i = 0; i < n; i++) {
+            if (arr[i] != -1) {
+                int start = Math.max(0, i - arr[i]);
+                int end = Math.min(n - 1, i + arr[i]);
+                intervals.add(new int[]{start, end});
+            }
+        }
+
+        intervals.sort((a, b) -> {
+            if (a[0] == b[0]) return b[1] - a[1];
+            return a[0] - b[0];
+        });
+
+        int count = 0;
+        int currentEnd = 0;
+        int maxReach = 0;
+        int i = 0;
+
+        while (currentEnd <= n - 1) {
+            boolean found = false;
+
+            while (i < intervals.size() && intervals.get(i)[0] <= currentEnd) {
+                maxReach = Math.max(maxReach, intervals.get(i)[1]);
+                found = true;
+                i++;
+            }
+
+            if (!found) return -1;
+
+            count++;
+            currentEnd = maxReach + 1;
+        }
+
+        return count;
+    }
+}
+_______________________________________________________
+
+Intuition :
+Each available person defines a time interval that they can cover. The goal is to cover the entire working day [0,n−1] using the minimum number of such intervals.
+
+This is a classic interval covering problem, where:
+Each person provides an interval.
+We must select the minimum number of intervals such that their union fully covers the target range.
+
+A greedy strategy works optimally:
+At every step, choose the interval that starts at or before the current uncovered point and extends coverage as far as possible.
+
+If at any point no interval can extend the coverage, then full coverage is impossible.
+_________________________________________________________
+
+Approach :
+Convert the array into a list of valid intervals:
+For each index i:
+If arr[i] != -1, create interval
+[max(0, i - arr[i]), min(n - 1, i + arr[i])]
+
+Sort all intervals by:
+Increasing start time
+If start is same, decreasing end time
+
+Initialize:
+currentEnd = 0 → start of uncovered range
+maxReach = 0
+count = 0
+
+Iterate through the intervals:
+For all intervals whose start ≤ currentEnd, update maxReach
+If no interval can extend beyond currentEnd, return -1
+Select the interval that gives the farthest reach
+Increment count
+Update currentEnd = maxReach + 1
+
+Repeat until currentEnd > n - 1
+
+Return count
+________________________________________________________
+
+Complexity :
+Time Complexity: O(n log n)
+Space Complexity: O(n)

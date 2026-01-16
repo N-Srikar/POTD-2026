@@ -1,0 +1,71 @@
+2975. Maximum Square Area by Removing Fences From a Field
+There is a large (m - 1) x (n - 1) rectangular field with corners at (1, 1) and (m, n) containing some horizontal and vertical fences given in arrays hFences and vFences respectively.
+
+Horizontal fences are from the coordinates (hFences[i], 1) to (hFences[i], n) and vertical fences are from the coordinates (1, vFences[i]) to (m, vFences[i]).
+
+Return the maximum area of a square field that can be formed by removing some fences (possibly none) or -1 if it is impossible to make a square field.
+
+Since the answer may be large, return it modulo 109 + 7.
+
+Note: The field is surrounded by two horizontal fences from the coordinates (1, 1) to (1, n) and (m, 1) to (m, n) and two vertical fences from the coordinates (1, 1) to (m, 1) and (1, n) to (m, n). These fences cannot be removed.
+________________________________________________________
+
+Code :
+class Solution {
+    public int maximizeSquareArea(int m, int n, int[] hFences, int[] vFences) {
+        List<Integer> hList = new ArrayList<>();
+        for (int h : hFences) hList.add(h);
+        hList.add(1);
+        hList.add(m);
+
+        List<Integer> vList = new ArrayList<>();
+        for (int v : vFences) vList.add(v);
+        vList.add(1);
+        vList.add(n);
+
+        Set<Integer> stt = new HashSet<>();
+        long ans = 0;
+
+        for (int i = 0; i < hList.size(); i++) {
+            for (int j = i + 1; j < hList.size(); j++) {
+                stt.add(Math.abs(hList.get(j) - hList.get(i)));
+            }
+        }
+
+        for (int i = 0; i < vList.size(); i++) {
+            for (int j = i + 1; j < vList.size(); j++) {
+                int val = Math.abs(vList.get(j) - vList.get(i));
+                if (stt.contains(val)) {
+                    ans = Math.max(ans, val);
+                }
+            }
+        }
+
+        if (ans == 0) {
+            return -1;
+        }
+
+        long MOD = 1_000_000_007;
+        return (int) ((ans * ans) % MOD);
+    }
+}
+________________________________________________________
+
+Intuition :
+A square requires equal height and width. Since fences can be removed, any two horizontal fences can define the top and bottom of a potential square, and any two vertical fences can define its left and right sides. Therefore, a square of side length k is possible if and only if there exists a pair of horizontal fences with distance k and a pair of vertical fences with the same distance k. 
+The problem reduces to finding the largest common distance between all possible horizontal fence gaps and vertical fence gaps.
+________________________________________________________
+
+Approach :
+Add the boundary fences (1 and m for horizontal, 1 and n for vertical) to the given fence lists.
+Compute all possible distances between every pair of horizontal fences and store them in a hash set.
+Compute all possible distances between every pair of vertical fences.
+For each vertical distance, check if it exists in the horizontal distance set.
+Track the maximum distance that appears in both sets.
+If no common distance is found, return -1.
+Otherwise, return the square of the maximum distance modulo (10^9 + 7).
+________________________________________________________
+
+Complexity :
+Time complexity: O(h^2  + v^2) 
+Space complexity: O(h^2)
