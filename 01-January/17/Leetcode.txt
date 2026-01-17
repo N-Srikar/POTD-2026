@@ -1,0 +1,53 @@
+3047. Find the Largest Area of Square Inside Two Rectangles
+There exist n rectangles in a 2D plane with edges parallel to the x and y axis. You are given two 2D integer arrays bottomLeft and topRight where bottomLeft[i] = [a_i, b_i] and topRight[i] = [c_i, d_i] represent the bottom-left and top-right coordinates of the ith rectangle, respectively.
+
+You need to find the maximum area of a square that can fit inside the intersecting region of at least two rectangles. Return 0 if such a square does not exist.
+_______________________________________________________
+
+Code :
+class Solution {
+    public long largestSquareArea(int[][] bottomLeft, int[][] topRight) {
+        int ans = 0, n = bottomLeft.length;
+        for (int i = 0; i < n; i++) {
+            int[] firstRectBL = bottomLeft[i];
+            int[] firstRectTR = topRight[i];
+            for (int j = i + 1; j < n; j++) {
+                int[] secondRectBL = bottomLeft[j];
+                int[] secondRectTR = topRight[j];
+                if (secondRectBL[0] >= firstRectTR[0] || secondRectTR[0] <= firstRectBL[0]) continue;
+                if (secondRectTR[1] <= firstRectBL[1] || secondRectBL[1] >= firstRectTR[1]) continue;
+                int pntAx = Math.max(firstRectBL[0], secondRectBL[0]);
+                int pntAy = Math.max(firstRectBL[1], secondRectBL[1]);
+                int pntBx = Math.min(firstRectTR[0], secondRectTR[0]);
+                int pntBy = Math.min(firstRectTR[1], secondRectTR[1]);
+                int sideA = pntBx - pntAx;
+                int sideB = pntBy - pntAy;
+                ans = Math.max(ans, Math.min(sideA, sideB));
+            }
+        }
+        return (long) ans * ans;
+    }
+}
+_______________________________________________________
+
+Intuition
+A square can fit inside the intersection of two rectangles only if the rectangles overlap. For every pair of rectangles, their intersection (if it exists) forms another rectangle. The largest square that can fit inside this intersection is determined by the smaller of the intersection’s width and height. By checking all rectangle pairs and tracking the largest possible square side, we can find the maximum square area.
+________________________________________________________
+
+Approach
+Iterate over every pair of rectangles.
+For each pair, check whether the two rectangles intersect.
+If they intersect, compute the intersection rectangle by:
+Taking the maximum of the bottom-left x and y coordinates.
+Taking the minimum of the top-right x and y coordinates.
+
+Compute the width and height of the intersection.
+The maximum square side length for this intersection is the minimum of its width and height.
+Update the global maximum square side length.
+
+Return the square of the maximum side length found, or 0 if no valid intersection exists.
+________________________________________________________
+
+Complexity : 
+Time complexity: O(n^2)
+Space complexity: O(1)

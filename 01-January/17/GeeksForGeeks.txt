@@ -1,0 +1,60 @@
+Expression contains redundant bracket or not
+Given a string of balanced expression s, check if it contains a redundant parenthesis or not. A set of parenthesis are redundant if the same sub-expression is surrounded by unnecessary or multiple brackets.
+Note: Expression may contain + , - , *, and / operators. Given expression is valid and there are no white spaces present.
+_______________________________________________________
+
+Code :
+class Solution {
+    public static boolean checkRedundancy(String s) {
+        Stack<Character> st = new Stack<>();
+
+        for (char ch : s.toCharArray()) {
+            if (ch != ')') {
+                st.push(ch);
+            } else {
+                boolean hasOperator = false;
+
+                while (!st.isEmpty() && st.peek() != '(') {
+                    char top = st.pop();
+                    if (top == '+' || top == '-' || top == '*' || top == '/') {
+                        hasOperator = true;
+                    }
+                }
+
+                st.pop(); // remove '('
+
+                if (!hasOperator) return true;
+            }
+        }
+        return false;
+    }
+}
+_______________________________________________________
+
+Intuition :
+Redundant brackets are those parentheses that do not contribute to changing the meaning of the expression.
+In a valid arithmetic expression, a pair of brackets is useful only if there is at least one operator inside them.
+
+So, if we encounter a closing bracket ) and inside the matching opening bracket ( there is no operator, then those brackets are redundant.
+
+Using a stack helps us examine the contents inside each pair of parentheses efficiently.
+_______________________________________________________
+
+Approach :
+Initialize an empty stack of characters.
+
+Traverse the expression character by character:
+If the current character is not a closing bracket ), push it onto the stack.
+
+When a closing bracket ) is encountered:
+Pop elements from the stack until an opening bracket ( is found.
+While popping, check if any operator (+, -, *, /) exists.
+If no operator is found before encountering (, the brackets are redundant → return true.
+Pop the opening bracket (.
+
+If the entire expression is processed without finding redundant brackets, return false.
+________________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(n)
