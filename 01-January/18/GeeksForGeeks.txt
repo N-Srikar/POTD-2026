@@ -1,0 +1,63 @@
+Next element with greater frequency
+Given an array arr[] of integers, for each element, find the first element to its right that has a higher frequency than the current element.
+If no such element exists, return -1 for that position.
+________________________________________________________
+
+Code :
+class Solution {
+    public ArrayList<Integer> nextFreqGreater(int[] arr) {
+        int n = arr.length;
+        ArrayList<Integer> result = new ArrayList<>();
+        for (int i = 0; i < n; i++) result.add(-1);
+
+        HashMap<Integer, Integer> freq = new HashMap<>();
+        for (int x : arr) {
+            freq.put(x, freq.getOrDefault(x, 0) + 1);
+        }
+
+        Stack<Integer> st = new Stack<>();
+
+        for (int i = 0; i < n; i++) {
+            while (!st.isEmpty() &&
+                   freq.get(arr[i]) > freq.get(arr[st.peek()])) {
+                result.set(st.pop(), arr[i]);
+            }
+            st.push(i);
+        }
+
+        return result;
+    }
+}
+_______________________________________________________
+
+Intuition :
+For each element, we are not comparing values directly; instead, we compare their frequencies in the entire array.
+The task is to find the next element to the right whose frequency is strictly greater than the frequency of the current element.
+
+This is similar in structure to the Next Greater Element problem, but the comparison key is frequency, not value.
+To solve this efficiently, we:
+Precompute frequencies of all elements.
+Use a monotonic stack to find the next element with a higher frequency.
+________________________________________________________
+
+Approach :
+Compute the frequency of each element using a HashMap.
+
+Initialize:
+A stack to store indices.
+An answer list initialized with -1 for all positions.
+
+Traverse the array from left to right:
+While the stack is not empty and
+frequency(arr[current]) > frequency(arr[stackTop]):
+Set the answer for stackTop as arr[current].
+Pop the stack.
+Push the current index onto the stack.
+
+Elements left in the stack do not have any element to their right with higher frequency, so their answer remains -1.
+Return the result list.
+________________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(n)
