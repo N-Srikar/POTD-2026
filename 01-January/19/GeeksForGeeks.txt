@@ -1,0 +1,72 @@
+Remove K Digits
+Given a non-negative integer s represented as a string and an integer k, remove exactly k digits from the string so that the resulting number is the smallest possible, while maintaining the relative order of the remaining digits.
+
+Note : The resulting number must not contain any leading zeros.
+If the resulting number is an empty string after the removal, return "0".
+__________________________________________________________
+
+Code :
+class Solution {
+    public String removeKdig(String s, int k) {
+        Stack<Character> st = new Stack<>();
+
+        for (char c : s.toCharArray()) {
+            while (!st.isEmpty() && k > 0 && st.peek() > c) {
+                st.pop();
+                k--;
+            }
+            st.push(c);
+        }
+
+        while (k > 0 && !st.isEmpty()) {
+            st.pop();
+            k--;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        while (!st.isEmpty()) {
+            sb.append(st.pop());
+        }
+        sb.reverse();
+
+        int i = 0;
+        while (i < sb.length() && sb.charAt(i) == '0') i++;
+
+        String res = sb.substring(i);
+        return res.length() == 0 ? "0" : res;
+    }
+}
+_______________________________________________________
+
+Intuition :
+To make the number as small as possible after removing exactly k digits, we want smaller digits to appear as early as possible.
+If a digit is larger than the digit that comes after it, keeping the larger digit will increase the value of the number.
+
+This naturally suggests a monotonic increasing stack:
+Remove a digit if a smaller digit appears to its right and we still have removals left.
+This greedy removal ensures the leftmost digits are minimized first, which has the greatest impact on the final number.
+
+Leading zeros must be avoided, and if all digits are removed, the answer should be "0".
+_________________________________________________________
+
+Approach :
+Use a stack to build the smallest possible number.
+Traverse each digit in the string:
+While:
+the stack is not empty,
+k > 0,
+and the top of the stack is greater than the current digit,
+pop the stack (remove that digit) and decrement k.
+Push the current digit onto the stack.
+
+If k is still greater than 0 after traversal:
+Remove the last k digits from the stack.
+
+Build the result string from the stack.
+Remove leading zeros from the result.
+If the result becomes empty, return "0".
+________________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(n)
