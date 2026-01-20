@@ -1,0 +1,51 @@
+3314. Construct the Minimum Bitwise Array I
+You are given an array nums consisting of n prime integers.
+
+You need to construct an array ans of length n, such that, for each index i, the bitwise OR of ans[i] and ans[i] + 1 is equal to nums[i], i.e. ans[i] OR (ans[i] + 1) == nums[i].
+
+Additionally, you must minimize each value of ans[i] in the resulting array.
+
+If it is not possible to find such a value for ans[i] that satisfies the condition, then set ans[i] = -1.
+________________________________________________________
+
+Code :
+class Solution {
+    public int[] minBitwiseArray(List<Integer> nums) {
+        int[] res = new int[nums.size()];
+        for (int i = 0; i < nums.size(); i++) {
+            int n = nums.get(i);
+            if ((n & 1) == 1) {
+                res[i] = n & ~(((n + 1) & ~n) >> 1);
+            } 
+            else {
+                res[i] = -1;
+            }
+        }
+        return res;
+    }
+}
+________________________________________________________
+
+Intuition :
+For each value nums[i], we need to find the smallest integer x such that
+x OR (x + 1) = nums[i].
+
+A key observation is that x OR (x + 1) is always odd, because adding 1 flips the least significant bit to 1. Therefore, if nums[i] is even, it is impossible to satisfy the condition and the answer must be -1.
+
+When nums[i] is odd, a valid solution may exist. In binary, x and nums[i] differ at exactly one bit: the leftmost bit in the trailing sequence of ones in nums[i]. To minimize x, we want to flip exactly that bit and keep all higher bits unchanged. By identifying this bit efficiently using bit manipulation, we can directly compute the minimum possible x.
+_______________________________________________________
+
+Approach :
+Iterate through each number n in nums.
+If n is even, set the result to -1.
+If n is odd:
+Find the position of the leftmost bit in the trailing ones of n using bitwise operations.
+Clear that bit in n to obtain the minimum valid x.
+
+Store the computed value in the result array.
+Return the result array.
+_______________________________________________________
+
+Complexity :
+Time complexity: O(n)
+Space complexity: O(1)

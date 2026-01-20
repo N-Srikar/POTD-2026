@@ -1,0 +1,91 @@
+Implement UNDO & REDO
+You are given a text document that is initially empty. You need to complete the following functions:
+void append(char x) - Append the character x to the end of the document.
+void undo() - Undo the most recent APPEND operation (remove the last appended character).
+void redo() - Reapply the most recent undone operation (restore the last character removed by UNDO).
+string read() - Return the current content of the document as a string.
+
+There will be a sequence of q queries arr[] on the document. The queries are represented in numeric form:
+1 x - Call append(x)
+2 - Call undo()
+3 - Call redo()
+4 - Call read()
+
+The driver code will process the queries, call the corresponding functions, and finally print the outputs of all READ() operations.
+You only need to implement the above four functions.
+__________________________________________________________
+
+Code :
+class Solution {
+    Stack<Character> mainStack = new Stack<>();
+    Stack<Character> redoStack = new Stack<>();
+
+    public void append(char x) {
+        mainStack.push(x);
+        redoStack.clear();
+    }
+
+    public void undo() {
+        if (!mainStack.isEmpty()) {
+            redoStack.push(mainStack.pop());
+        }
+    }
+
+    public void redo() {
+        if (!redoStack.isEmpty()) {
+            mainStack.push(redoStack.pop());
+        }
+    }
+
+    public String read() {
+        StringBuilder sb = new StringBuilder();
+        for (char c : mainStack) {
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+}
+________________________________________________________
+
+Intuition :
+The document changes only through append operations.
+Undo and redo operations are simply about reverting or reapplying these append actions in order.
+
+This behavior maps perfectly to the use of two stacks:
+One stack to store the current document state.
+Another stack to store undone operations so they can be reapplied later.
+
+Whenever a new append happens, all previously undone operations become invalid, so the redo history must be cleared.
+________________________________________________________
+
+Approach :
+Maintain:
+mainStack → stores characters currently present in the document.
+redoStack → stores characters removed by undo operations.
+
+append(x):
+Push x onto mainStack.
+Clear redoStack (redo history is invalid after a new append).
+
+undo():
+If mainStack is not empty:
+Pop the top character from mainStack.
+Push it onto redoStack.
+
+redo():
+If redoStack is not empty:
+Pop the top character from redoStack.
+Push it back onto mainStack.
+
+read():
+Convert the contents of mainStack into a string in insertion order and return it.
+_______________________________________________________
+
+Complexity :
+Time Complexity:
+append: O(1)
+undo: O(1)
+redo: O(1)
+read: O(n)
+
+Space Complexity: O(n)
