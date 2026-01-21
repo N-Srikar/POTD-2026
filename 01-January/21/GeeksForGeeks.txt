@@ -1,0 +1,63 @@
+Stock span problem
+The stock span problem is a financial problem where we have a series of daily price quotes for a stock and we need to calculate the span of stock price for all days.
+You are given an array arr[] representing daily stock prices, the stock span for the i-th day is the number of consecutive days up to day i (including day i itself) for which the price of the stock is less than or equal to the price on day i. Return the span of stock prices for each day in the given sequence.
+_________________________________________________________
+
+Code :
+class Solution {
+    public ArrayList<Integer> calculateSpan(int[] arr) {
+        int n = arr.length;
+        ArrayList<Integer> span = new ArrayList<>();
+        Stack<Integer> st = new Stack<>();
+
+        for (int i = 0; i < n; i++) {
+            while (!st.isEmpty() && arr[st.peek()] <= arr[i]) {
+                st.pop();
+            }
+
+            if (st.isEmpty()) {
+                span.add(i + 1);
+            } else {
+                span.add(i - st.peek());
+            }
+
+            st.push(i);
+        }
+
+        return span;
+    }
+}
+_______________________________________________________
+
+Intuition :
+For each day, we need to find how many consecutive days before it (including itself) had a stock price less than or equal to today’s price.
+If we check previous days one by one for every day, the solution becomes inefficient.
+
+The key observation is:
+Once we find a previous day with a higher price, the span stops there.
+We can skip multiple smaller prices at once using a monotonic decreasing stack.
+
+This avoids redundant comparisons and leads to an optimal solution.
+_________________________________________________________
+
+Approach :
+Use a stack that stores indices of days.
+The stack maintains indices in such a way that their prices are in strictly decreasing order.
+
+Traverse the array from left to right:
+While the stack is not empty and the price at the top index is less than or equal to the current price:
+Pop the stack.
+
+If the stack becomes empty:
+The span is i + 1 (entire range from day 0 to day i).
+
+Otherwise:
+The span is i - stack.peek().
+Push the current index onto the stack.
+
+Repeat for all days and store the spans.
+________________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(n)
