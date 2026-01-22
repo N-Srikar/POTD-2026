@@ -1,0 +1,72 @@
+3507. Minimum Pair Removal to Sort Array I
+Given an array nums, you can perform the following operation any number of times:
+Select the adjacent pair with the minimum sum in nums. If multiple such pairs exist, choose the leftmost one.
+Replace the pair with their sum.
+Return the minimum number of operations needed to make the array non-decreasing.
+
+An array is said to be non-decreasing if each element is greater than or equal to its previous element (if it exists).
+_______________________________________________________
+
+Code :
+class Solution {
+    public int minPair(List<Integer> v) {
+        int minSum = (int)1e9;
+        int pos = -1;
+
+        for(int i = 0; i < v.size() - 1; i ++){
+            int sum = v.get(i) + v.get(i + 1);
+            if (sum < minSum) {
+                minSum = sum;
+                pos = i;
+            }
+        }
+        return pos;
+    }
+
+    public void mergePair(List<Integer> v, int pos) {
+        v.set(pos, v.get(pos) + v.get(pos + 1));
+        v.remove(pos + 1);
+    }
+
+    public int minimumPairRemoval(int[] nums) {
+        List<Integer> v = new ArrayList<>();
+        for(int x : nums) v.add(x);
+
+        int ops = 0;
+        while(!isSorted(v)){
+            int pos = minPair(v);
+            mergePair(v, pos);
+            ops++;
+        }
+        return ops;
+    }
+
+    private boolean isSorted(List <Integer> v) {
+        for(int i = 0; i < v.size() - 1; i ++){
+            if(v.get(i) > v.get(i + 1)) return false;
+        }
+        return true;
+    }
+}
+_______________________________________________________
+
+Intuition :
+The operation is strictly defined: at every step, we must merge the adjacent pair with the minimum sum, choosing the leftmost one in case of ties. Therefore, we have no freedom in choosing which pair to merge. The array gradually shrinks, and after each merge, the values change, which can help eliminate violations of the non-decreasing order. The task reduces to repeatedly applying this forced operation until the array becomes non-decreasing, while counting how many merges are required.
+______________________________________________________
+
+Approach :
+Convert the input array into a dynamic list to allow easy merging.
+Repeatedly check whether the current list is non-decreasing.
+
+If it is not sorted:
+Scan the list to find the adjacent pair with the minimum sum.
+Merge that pair by replacing it with their sum.
+Increment the operation count.
+
+Continue this process until the list becomes non-decreasing.
+Return the total number of operations performed.
+________________________________________________________
+
+Complexity :
+Time complexity: O(n^2)
+Space complexity: O(n)

@@ -1,0 +1,77 @@
+Sum of subarray ranges
+Given an integer array arr[], the range of a subarray is defined as the difference between the largest and smallest elements within that subarray. Your task is to return the sum of the ranges of all possible subarrays in the array.
+
+Note: It is guaranteed that the result will fit within a 32-bit integer.
+_______________________________________________________
+
+Code :
+class Solution {
+    public int subarrayRanges(int[] arr) {
+        int n = arr.length;
+        long maxSum = 0, minSum = 0;
+        Stack<Integer> st = new Stack<>();
+
+        for (int i = 0; i <= n; i++) {
+            while (!st.isEmpty() && (i == n || arr[st.peek()] < (i < n ? arr[i] : Integer.MAX_VALUE))) {
+                int mid = st.pop();
+                int left = st.isEmpty() ? mid + 1 : mid - st.peek();
+                int right = i - mid;
+                maxSum += (long) arr[mid] * left * right;
+            }
+            st.push(i);
+        }
+
+        st.clear();
+
+        for (int i = 0; i <= n; i++) {
+            while (!st.isEmpty() && (i == n || arr[st.peek()] > (i < n ? arr[i] : Integer.MIN_VALUE))) {
+                int mid = st.pop();
+                int left = st.isEmpty() ? mid + 1 : mid - st.peek();
+                int right = i - mid;
+                minSum += (long) arr[mid] * left * right;
+            }
+            st.push(i);
+        }
+
+        return (int)(maxSum - minSum);
+    }
+}
+________________________________________________________
+
+Intuition :
+The range of a subarray is defined as:
+range=maximum element−minimum element
+
+So, the required result is:
+∑(max of subarray)−∑(min of subarray)∑(max of subarray)−∑(min of subarray)
+
+Instead of iterating over all subarrays (which would be inefficient), we reverse the perspective:
+Count how many subarrays consider a given element as maximum
+Count how many subarrays consider a given element as minimum
+
+Each element’s contribution can then be added or subtracted accordingly.
+
+This can be efficiently computed using monotonic stacks.
+________________________________________________________
+
+Approach :
+Compute the contribution of each element as a maximum:
+Use a monotonic decreasing stack.
+For each element, find:
+Distance to previous greater element.
+Distance to next greater element.
+Contribution = arr[i] * left * right.
+
+Compute the contribution of each element as a minimum:
+Use a monotonic increasing stack.
+For each element, find:
+Distance to previous smaller element.
+Distance to next smaller element.
+Contribution = arr[i] * left * right.
+
+Subtract total minimum contribution from total maximum contribution.
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(n)
