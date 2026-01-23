@@ -1,0 +1,132 @@
+3510. Minimum Pair Removal to Sort Array II
+Given an array nums, you can perform the following operation any number of times:
+Select the adjacent pair with the minimum sum in nums. If multiple such pairs exist, choose the leftmost one.
+Replace the pair with their sum.
+Return the minimum number of operations needed to make the array non-decreasing.
+
+An array is said to be non-decreasing if each element is greater than or equal to its previous element (if it exists).
+_______________________________________________________
+
+Code :
+class Solution {
+    private long flipped;
+    private int[] left;
+    private int[] right;
+    private TreeSet<long[]> pairSum;
+
+    public int minimumPairRemoval(int[] nums) {
+        int N = nums.length;
+        if (N < 2) return 0;
+
+        long[] array = new long[N];
+        for (int i = 0; i < N; i++)
+            array[i] = nums[i];
+
+        flipped = 0;
+        left = new int[N];
+        right = new int[N];
+
+        pairSum = new TreeSet<>((a, b) -> {
+            if (a[0] != b[0])
+                return Long.compare(a[0], b[0]);
+            return Long.compare(a[1], b[1]);
+        });
+
+        for (int i = 0; i < N; i++) {
+            left[i] = i - 1;
+            right[i] = i + 1;
+        }
+
+        for (int i = 0; i < N - 1; i++) {
+            if (array[i] > array[i + 1]) flipped++;
+            pairSum.add(new long[] { array[i] + array[i + 1], i });
+        }
+
+        int op = 0;
+        while (flipped > 0 && !pairSum.isEmpty()) {
+            long[] first = pairSum.pollFirst();
+            int i = (int) first[1];
+
+            int j = right[i];
+            int h = left[i];
+            int k = right[j];
+
+            remove(h, N, array);
+            if (array[i] > array[j])
+                flipped--;
+            remove(j, N, array);
+
+            array[i] += array[j];
+
+            op++;
+            right[i] = k;
+            if (k < N) {
+                left[k] = i;
+            }
+
+            add(h, N, array);
+            add(i, N, array);
+        }
+
+        return op;
+    }
+
+    private void add(int i, int N, long[] array) {
+        if (i >= 0 && i < N) {
+            int j = right[i];
+            if (j < N) {
+                pairSum.add(new long[] { array[i] + array[j], i });
+                if (array[i] > array[j])
+                    flipped++;
+            }
+        }
+    }
+
+    private void remove(int i, int N, long[] array) {
+        if (i >= 0 && i < N) {
+            int j = right[i];
+            if (j < N) {
+                long[] target = new long[] { array[i] + array[j], i };
+                if (pairSum.contains(target)) {
+                    if (array[i] > array[j])
+                        flipped--;
+                    pairSum.remove(target);
+                }
+            }
+        }
+    }
+
+}
+________________________________________________________
+
+Intuition :
+The operation is strictly constrained: at every step we must merge the adjacent pair with the minimum sum, choosing the leftmost one if there is a tie. Therefore, the process is a forced simulation rather than a greedy choice problem.
+
+An array becomes non-decreasing when there are no inversions, i.e., no adjacent pairs where the left element is greater than the right one. If we can efficiently track these inversions while always selecting the minimum-sum adjacent pair, we can simulate the process until the array is sorted.
+
+To do this efficiently, we combine:
+A priority queue / balanced set to always extract the minimum-sum adjacent pair.
+A doubly linked list structure to maintain adjacency after merges.
+A counter for inverted (descending) adjacent pairs to know when the array becomes non-decreasing.
+_______________________________________________________
+
+Approach :
+Represent the array as a doubly linked list using left[i] and right[i] pointers.
+Insert all adjacent pairs into a balanced set ordered by (sum, index) to always pick the minimum-sum pair.
+Count the number of adjacent inversions (nums[i] > nums[i+1]).
+
+While there are still inversions:
+Extract the minimum-sum pair (i, j) from the set.
+Remove all affected neighboring pairs from the set.
+Merge the pair by updating the value at i and removing j from the linked list.
+Update neighbor links to maintain adjacency.
+Reinsert newly formed adjacent pairs into the set.
+Update the inversion count accordingly.
+Increment the operation counter.
+
+Stop once the inversion count becomes zero and return the number of operations.
+_______________________________________________________
+
+Complexity :
+Time complexity: O(nlogn)
+Space complexity: O(n)
