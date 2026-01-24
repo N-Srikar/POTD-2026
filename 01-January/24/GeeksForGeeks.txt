@@ -1,0 +1,45 @@
+Josephus problem
+You are playing a game with n people standing in a circle, numbered from 1 to n. Starting from person 1, every kth person is eliminated in a circular fashion. The process continues until only one person remains.
+Given integers n and k, return the position (1-based index) of the person who will survive.
+________________________________________________________
+
+Code :
+class Solution {
+    public int josephus(int n, int k) {
+        int ans = 0;
+        for (int i = 2; i <= n; i++) {
+            ans = (ans + k) % i;
+        }
+        return ans + 1;
+    }
+}
+________________________________________________________
+
+Intuition :
+The Josephus problem is about systematic elimination in a circle.
+After every elimination, the circle becomes smaller, but the relative positions of the remaining people stay the same, just shifted.
+
+Instead of simulating the entire process (which is inefficient), we observe a pattern:
+If we know the survivor position for n-1 people, we can derive it for n people.
+When one person is eliminated, the next counting starts from the next position, which causes a shift in indices.
+
+This leads to a recursive / iterative mathematical relation.
+_______________________________________________________
+
+Approach :
+Use the classic Josephus recurrence:
+Let f(n, k) be the survivor’s position using 0-based indexing.
+
+Base case: f(1, k) = 0
+Recurrence relation: f(n, k) = (f(n - 1, k) + k) % n
+
+Steps:
+Start with ans = 0 (for 1 person).
+Iteratively apply the recurrence from 2 to n.
+Convert the final result from 0-based to 1-based indexing by adding 1.
+This avoids simulation and runs efficiently.
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(1)
