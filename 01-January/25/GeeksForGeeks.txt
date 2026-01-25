@@ -1,0 +1,57 @@
+Number of Valid Parentheses
+You are given a number n, your task is to find the number of all the valid parentheses expressions of that length using only "(" and ")" brackets.
+
+An input string of parentheses is valid if :
+Open brackets must be closed in correct order.
+Every close bracket has a corresponding open bracket.
+________________________________________________________
+
+Code :
+class Solution {
+    int findWays(int n) {
+        if (n % 2 != 0) return 0;
+
+        int pairs = n / 2;
+        int[] dp = new int[pairs + 1];
+        dp[0] = 1;
+
+        for (int i = 1; i <= pairs; i++) {
+            for (int j = 0; j < i; j++) {
+                dp[i] += dp[j] * dp[i - j - 1];
+            }
+        }
+
+        return dp[pairs];
+    }
+}
+_______________________________________________________
+
+Intuition :
+A valid parentheses expression must satisfy two conditions:
+At no point should the number of closing brackets exceed the number of opening brackets.
+By the end, the number of opening and closing brackets must be equal.
+
+For a valid parentheses string of total length n, 
+n must be even, because brackets come in pairs.
+If n is odd, it is impossible to form a valid expression.
+
+Let pairs = n / 2.
+The number of valid parentheses expressions using pairs pairs of brackets is the pairs-th Catalan number.
+________________________________________________________
+
+Approach :
+If n is odd, return 0 (no valid expression possible).
+Let pairs = n / 2.
+
+Use Dynamic Programming to compute the Catalan number:
+Define dp[i] as the number of valid parentheses expressions using i pairs.
+Base case:dp[0] = 1
+Recurrence relation: dp[i] = Σ (dp[j] * dp[i - j - 1])  for j = 0 to i - 1
+(This represents choosing a matching pair and recursively forming valid expressions inside and outside it.)
+
+Return dp[pairs].
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(pairs²) ≈ O((n/2)²)
+Space Complexity: O(pairs) ≈ O(n)

@@ -1,0 +1,46 @@
+1984. Minimum Difference Between Highest and Lowest of K Scores
+You are given a 0-indexed integer array nums, where nums[i] represents the score of the ith student. You are also given an integer k.
+
+Pick the scores of any k students from the array so that the difference between the highest and the lowest of the k scores is minimized.
+
+Return the minimum possible difference.
+_______________________________________________________
+
+Code :
+class Solution {
+    public int minimumDifference(int[] nums, int k) {
+        if (k == 1) return 0;
+
+        Arrays.sort(nums);
+		
+        int i = 0, j = k - 1, 
+        min = Integer.MAX_VALUE;
+
+        while (j < nums.length) {
+            min = Math.min(min, nums[j++] - nums[i++]);
+        }
+
+        return min;
+    }
+}
+_______________________________________________________
+
+Intuition :
+To minimize the difference between the highest and lowest scores among any k students, the selected scores should be as close to each other as possible. Sorting the array brings scores into increasing order, making it easy to examine groups of k consecutive scores. For any such group, the minimum score is the first element and the maximum score is the last element, so their difference can be computed directly. The smallest difference among all valid groups is the answer.
+_______________________________________________________
+
+Approach :
+If k == 1, return 0 since the difference between a single score is zero.
+Sort the nums array.
+Use a sliding window of size k over the sorted array.
+
+For each window:
+Compute the difference between the last and first elements.
+Update the minimum difference found so far.
+
+Return the minimum difference after checking all possible windows.
+_______________________________________________________
+
+Complexity :
+Time complexity: O(nlogn)
+Space complexity: O(1)
