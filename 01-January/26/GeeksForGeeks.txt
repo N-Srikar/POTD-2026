@@ -1,0 +1,68 @@
+Generate Permutations of an array
+Given an array arr[] of unique elements. Generate all possible permutations of the elements in the array.
+Note: You can return the permutations in any order, the driver code will print them in sorted order.
+_______________________________________________________
+
+Code :
+class Solution {
+    public static ArrayList<ArrayList<Integer>> permuteDist(int[] arr) {
+        ArrayList<ArrayList<Integer>> result = new ArrayList<>();
+        boolean[] used = new boolean[arr.length];
+        backtrack(arr, used, new ArrayList<>(), result);
+        return result;
+    }
+
+    private static void backtrack(int[] arr, boolean[] used,
+                                  ArrayList<Integer> current,
+                                  ArrayList<ArrayList<Integer>> result) {
+        if (current.size() == arr.length) {
+            result.add(new ArrayList<>(current));
+            return;
+        }
+
+        for (int i = 0; i < arr.length; i++) {
+            if (!used[i]) {
+                used[i] = true;
+                current.add(arr[i]);
+                backtrack(arr, used, current, result);
+                current.remove(current.size() - 1);
+                used[i] = false;
+            }
+        }
+    }
+}
+________________________________________________________
+
+Intuition :
+Permutations are all possible rearrangements of the given elements.
+Since all elements are unique, every position in the array can independently choose any unused element.
+
+The natural way to generate permutations is backtracking:
+Fix one element at a position.
+Recursively generate permutations of the remaining elements.
+Undo the choice (backtrack) and try the next possibility.
+
+This ensures all permutations are generated exactly once.
+_______________________________________________________
+
+Approach :
+Use a recursive backtracking function.
+
+Maintain:
+A temporary list (current) representing the permutation being built.
+A boolean array (used) to mark which elements are already included.
+
+At each recursion level:
+Try placing every unused element at the current position.
+Mark it as used and recurse.
+After recursion, unmark it (backtrack).
+
+When the size of current equals the array length:
+Add a copy of current to the result list.
+
+Return the list of all permutations.
+________________________________________________________
+
+Complexity :
+Time Complexity: O(n × n!)
+Space Complexity: O(n)
