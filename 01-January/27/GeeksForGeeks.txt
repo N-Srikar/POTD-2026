@@ -1,0 +1,70 @@
+Word Search
+You are given a matrix mat[][] of size n*m containing english alphabets and a string word. Check if the word exists on the mat[][] or not. The word can be constructed by using letters from adjacent cells, either horizontally or vertically. The same cell cannot be used more than once.
+______________________________________________________
+
+Code :
+class Solution {
+    public boolean isWordExist(char[][] mat, String word) {
+        int n = mat.length;
+        int m = mat[0].length;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (dfs(mat, word, i, j, 0)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean dfs(char[][] mat, String word, int i, int j, int idx) {
+        if (idx == word.length()) return true;
+
+        if (i < 0 || j < 0 || i >= mat.length || j >= mat[0].length)
+            return false;
+
+        if (mat[i][j] != word.charAt(idx))
+            return false;
+
+        char temp = mat[i][j];
+        mat[i][j] = '#';
+
+        boolean found =
+                dfs(mat, word, i + 1, j, idx + 1) ||
+                dfs(mat, word, i - 1, j, idx + 1) ||
+                dfs(mat, word, i, j + 1, idx + 1) ||
+                dfs(mat, word, i, j - 1, idx + 1);
+
+        mat[i][j] = temp;
+        return found;
+    }
+}
+_______________________________________________________
+
+Intuition :
+The word must be formed by moving through adjacent cells (up, down, left, right) while not reusing the same cell.
+This naturally suggests a Depth First Search (DFS) with backtracking:
+From any cell matching the first character of the word, try to build the word character by character.
+If at any point the characters don’t match or boundaries are crossed, that path is invalid.
+Backtracking ensures that each cell can be reused for other paths after returning from recursion.
+_______________________________________________________
+
+Approach :
+Traverse every cell of the matrix.
+If a cell matches the first character of the word, start a DFS from that cell.
+
+In DFS:
+If all characters of the word are matched, return true.
+Check boundary conditions and character match.
+Mark the current cell as visited (temporarily).
+Explore all four directions.
+Restore the cell (backtrack).
+
+If any DFS call returns true, the word exists.
+If all possibilities fail, return false.
+________________________________________________________
+
+Complexity :
+Time Complexity: O(n × m × 4^L)
+Space Complexity: O(L)

@@ -1,0 +1,97 @@
+3650. Minimum Cost Path with Edge Reversals
+You are given a directed, weighted graph with n nodes labeled from 0 to n - 1, and an array edges where edges[i] = [ui, vi, wi] represents a directed edge from node ui to node vi with cost wi.
+
+Each node ui has a switch that can be used at most once: when you arrive at ui and have not yet used its switch, you may activate it on one of its incoming edges vi → ui reverse that edge to ui → vi and immediately traverse it.
+
+The reversal is only valid for that single move, and using a reversed edge costs 2 * wi.
+
+Return the minimum total cost to travel from node 0 to node n - 1. If it is not possible, return -1.
+________________________________________________________
+
+Code :
+class Solution {
+    public int minCost(int n, int[][] edges) {
+        List<List<int[]>> out = new ArrayList<>();
+        List<List<int[]>> in = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            out.add(new ArrayList<>());
+            in.add(new ArrayList<>());
+        }
+
+        for (int[] e : edges) {
+            out.get(e[0]).add(new int[]{e[1], e[2]});
+            in.get(e[1]).add(new int[]{e[0], e[2]});
+        }
+
+        long INF = (long) 1e18;
+        long[][] dist = new long[n][2];
+        for (int i = 0; i < n; i++) {
+            Arrays.fill(dist[i], INF);
+        }
+
+        PriorityQueue<long[]> pq =
+            new PriorityQueue<>((a, b) -> Long.compare(a[0], b[0]));
+        dist[0][0] = 0;
+        pq.add(new long[]{0, 0, 0});
+
+        while (!pq.isEmpty()) {
+            long[] cur = pq.poll();
+            long cost = cur[0];
+            int u = (int) cur[1];
+            int used = (int) cur[2];
+
+            if (cost > dist[u][used]) continue;
+
+            for (int[] edge : out.get(u)) {
+                int v = edge[0];
+                int w = edge[1];
+                if (dist[v][0] > cost + w) {
+                    dist[v][0] = cost + w;
+                    pq.add(new long[]{dist[v][0], v, 0});
+                }
+            }
+
+            if (used == 0) {
+                for (int[] edge : in.get(u)) {
+                    int v = edge[0];
+                    int w = edge[1];
+                    if (dist[v][0] > cost + 2L * w) {
+                        dist[v][0] = cost + 2L * w;
+                        pq.add(new long[]{dist[v][0], v, 0});
+                    }
+                }
+            }
+        }
+
+        long ans = Math.min(dist[n - 1][0], dist[n - 1][1]);
+        return ans >= INF ? -1 : (int) ans;
+    }
+}
+________________________________________________________
+
+Intuition :
+Each node allows a special one-time operation that can reverse one of its incoming edges and traverse it at double cost. This means that reaching the same node before or after using its switch can lead to different future possibilities. Therefore, the shortest path problem must distinguish between these two situations. By treating each node together with its switch-usage state as a separate state, we can correctly model all valid paths.
+_______________________________________________________
+
+Approach :
+Build two adjacency lists:
+out[u] for normal outgoing edges from node u.
+in[u] for incoming edges to node u (used for edge reversal).
+
+Use Dijkstra’s algorithm with an expanded state representation dist[node][used], where:
+used = 0 means the switch at the current node has not been used.
+used = 1 means the switch has already been used.
+
+Initialize the distance to (0, 0) as 0 and all other states as infinity.
+
+From a state (u, used):
+Traverse all normal outgoing edges u → v with cost w.
+If used == 0, traverse any reversed incoming edge v → u as u → v with cost 2 × w.
+
+Use a priority queue to always expand the state with the smallest current cost.
+The answer is the minimum cost to reach node n − 1 in any valid switch state; if unreachable, return -1.
+________________________________________________________
+
+Complexity :
+Time complexity: O((n+m)logn)
+Space complexity: O(n+m)
