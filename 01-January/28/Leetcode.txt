@@ -1,0 +1,105 @@
+3651. Minimum Cost Path with Teleportations
+You are given a m x n 2D integer array grid and an integer k. You start at the top-left cell (0, 0) and your goal is to reach the bottom‐right cell (m - 1, n - 1).
+
+There are two types of moves available:
+Normal move: You can move right or down from your current cell (i, j), i.e. you can move to (i, j + 1) (right) or (i + 1, j) (down). The cost is the value of the destination cell.
+
+Teleportation: You can teleport from any cell (i, j), to any cell (x, y) such that grid[x][y] <= grid[i][j]; the cost of this move is 0. You may teleport at most k times.
+
+Return the minimum total cost to reach cell (m - 1, n - 1) from (0, 0).
+________________________________________________________
+
+Code :
+class Solution {
+    public int minCost(int[][] grid, int k) {
+        int n = grid.length, m = grid[0].length;
+        
+        int maxVal = 0;
+        for (int[] row : grid) {
+            for (int val : row) maxVal = Math.max(maxVal, val);
+        }
+
+        int[][] dp = new int[n][m];
+        int[] temp = new int[maxVal + 1];
+        int[] best = new int[maxVal + 1];
+        
+        Arrays.fill(temp, Integer.MAX_VALUE);
+        
+        temp[grid[n - 1][m - 1]] = 0;
+
+        for (int i = n - 1; i >= 0; i--) {
+            for (int j = m - 1; j >= 0; j--) {
+                if (i == n - 1 && j == m - 1) continue;
+                
+                int down = (i + 1 < n) ? dp[i + 1][j] + grid[i + 1][j] : Integer.MAX_VALUE;
+                int right = (j + 1 < m) ? dp[i][j + 1] + grid[i][j + 1] : Integer.MAX_VALUE;
+                
+                dp[i][j] = Math.min(down, right);
+                
+                if (dp[i][j] != Integer.MAX_VALUE) {
+                    temp[grid[i][j]] = Math.min(temp[grid[i][j]], dp[i][j]);
+                }
+            }
+        }
+
+        for (int x = 0; x < k; x++) {
+            best[0] = temp[0];
+            for (int v = 1; v <= maxVal; v++) {
+                best[v] = Math.min(best[v - 1], temp[v]);
+            }
+            
+            for (int i = n - 1; i >= 0; i--) {
+                for (int j = m - 1; j >= 0; j--) {
+                    if (i == n - 1 && j == m - 1) continue;
+                    
+                    int down = (i + 1 < n) ? dp[i + 1][j] + grid[i + 1][j] : Integer.MAX_VALUE;
+                    int right = (j + 1 < m) ? dp[i][j + 1] + grid[i][j + 1] : Integer.MAX_VALUE;
+                    int walkCost = Math.min(down, right);
+                    
+                    int teleportCost = best[grid[i][j]];
+                    
+                    dp[i][j] = Math.min(walkCost, teleportCost);
+                    
+                    if (dp[i][j] != Integer.MAX_VALUE) {
+                        temp[grid[i][j]] = Math.min(temp[grid[i][j]], dp[i][j]);
+                    }
+                }
+            }
+        }
+        
+        return dp[0][0];
+    }
+}
+_______________________________________________________
+
+Intuition :
+At each cell, we want the minimum cost to reach the destination. Normally, this is solved with a standard grid DP where you can only move right or down and pay the value of the destination cell. However, teleportation changes the problem: from a cell with value v, we may jump (up to k times total) to any cell whose value is ≤ v at zero cost.
+
+Naively checking all possible teleport destinations would be too slow. The key insight is that we do not need to know which cell we teleport to—only the minimum cost achievable from any cell with value ≤ v. By maintaining this information using a prefix minimum array over cell values, teleportation can be handled efficiently. Each teleport layer acts like a relaxation step that can only improve the current DP values.
+_______________________________________________________
+
+Approach :
+Define dp[i][j] as the minimum cost to reach (n-1, m-1) starting from cell (i, j).
+Base case (k = 0):
+Compute dp using standard reverse grid DP (only right and down moves).
+While filling dp, maintain an array temp[v] storing the minimum dp value among all cells with grid value v.
+
+Teleport layers (k > 0):
+For each teleport allowed:
+Build a prefix minimum array best, where
+best[v] = min(temp[0..v]).
+This represents the cheapest path starting from any cell with value ≤ v.
+Recompute dp[i][j] as the minimum of:
+Walking normally (right or down).
+
+Teleporting: best[grid[i][j]].
+Update temp with the improved dp values for use in the next layer.
+
+After k layers of relaxation, return dp[0][0].
+_______________________________________________________
+
+Complexity :
+Time complexity: O(k⋅m⋅n+k⋅V)
+Space complexity: O(m⋅n+V)
+where (V) is the maximum value in the grid.
+

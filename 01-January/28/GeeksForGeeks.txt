@@ -1,0 +1,52 @@
+Count Subset With Target Sum II
+Given an array arr[] and an integer k, find the count of subsets whose sum is equals to k.
+Note: It is guaranteed that the no of valid subsets will fit within a 32-bit integer.
+_______________________________________________________
+
+Code :
+class Solution {
+    public int countSubset(int[] arr, int k) {
+        int minSum = 0, maxSum = 0;
+        for (int x : arr) {
+            if (x < 0) minSum += x;
+            else maxSum += x;
+        }
+
+        if (k < minSum || k > maxSum) return 0;
+
+        Map<Integer, Integer> dp = new HashMap<>();
+        dp.put(0, 1);
+
+        for (int num : arr) {
+            Map<Integer, Integer> next = new HashMap<>(dp);
+            for (Map.Entry<Integer, Integer> e : dp.entrySet()) {
+                int newSum = e.getKey() + num;
+                next.put(newSum, next.getOrDefault(newSum, 0) + e.getValue());
+            }
+            dp = next;
+        }
+
+        return dp.getOrDefault(k, 0);
+    }
+}
+_______________________________________________________
+
+Intuition :
+If target k is outside the achievable sum range → return 0
+Otherwise, use HashMap DP safely
+This pruning reduces exponential explosion
+_______________________________________________________
+
+Approach :
+Compute:
+minSum = sum of all negative values
+maxSum = sum of all positive values
+
+If k is outside [minSum, maxSum], return 0
+Use HashMap DP to count subsets
+Return count for k
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(n × S)
+Space Complexity: O(S)
