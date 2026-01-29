@@ -1,0 +1,64 @@
+Stream First Non-repeating
+Given a string s consisting of only lowercase alphabets, for each index i in the string (0 ≤ i < n), find the first non-repeating character in the prefix s[0..i]. If no such character exists, use '#'.
+________________________________________________________
+
+Code :
+class Solution {
+    public String firstNonRepeating(String s) {
+        int[] freq = new int[26];
+        Queue<Character> q = new ArrayDeque<>();
+        StringBuilder sb = new StringBuilder();
+
+        for (char c : s.toCharArray()) {
+            freq[c - 'a']++;
+            q.offer(c);
+
+            while (!q.isEmpty() && freq[q.peek() - 'a'] > 1) {
+                q.poll();
+            }
+
+            if (q.isEmpty()) sb.append('#');
+            else sb.append(q.peek());
+        }
+
+        return sb.toString();
+    }
+}
+________________________________________________________
+
+Intuition :
+As we process the string character by character, we need to determine the first character in the current prefix that appears exactly once.
+A character that appears more than once is no longer eligible.
+
+This is a classic stream processing problem:
+Frequencies must be tracked dynamically.
+Order of arrival must be preserved.
+
+To achieve this efficiently, we use:
+A frequency array to track how many times each character appears.
+A queue to maintain the order of characters that are candidates for being non-repeating.
+________________________________________________________
+
+Approach :
+Initialize:
+A frequency array freq[26] for lowercase letters.
+A queue to store characters as they appear.
+A StringBuilder to build the result.
+
+Traverse the string one character at a time:
+Increment the frequency of the current character.
+Add the character to the queue.
+
+While the queue is not empty and the front character has frequency greater than 1:
+Remove it from the queue.
+
+If the queue is empty:
+Append '#' to the result.
+Otherwise, append the front character of the queue.
+
+After processing all characters, return the built string.
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(1)

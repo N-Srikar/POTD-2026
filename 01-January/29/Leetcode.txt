@@ -1,0 +1,70 @@
+2976. Minimum Cost to Convert String I
+You are given two 0-indexed strings source and target, both of length n and consisting of lowercase English letters. You are also given two 0-indexed character arrays original and changed, and an integer array cost, where cost[i] represents the cost of changing the character original[i] to the character changed[i].
+
+You start with the string source. In one operation, you can pick a character x from the string and change it to the character y at a cost of z if there exists any index j such that cost[j] == z, original[j] == x, and changed[j] == y.
+
+Return the minimum cost to convert the string source to the string target using any number of operations. If it is impossible to convert source to target, return -1.
+
+Note that there may exist indices i, j such that original[j] == original[i] and changed[j] == changed[i].
+________________________________________________________
+
+Code :
+class Solution {
+    public long minimumCost(String source, String target, char[] original, char[] changed, int[] cost) {
+        int[][] dis = new int[26][26];
+        for (int i = 0; i < 26; i++) {
+            Arrays.fill(dis[i], Integer.MAX_VALUE);
+            dis[i][i] = 0;
+        }
+        for (int i = 0; i < cost.length; i++) {
+            dis[original[i] - 'a'][changed[i] - 'a'] = Math.min(dis[original[i] - 'a'][changed[i] - 'a'], cost[i]);
+        }
+        for (int k = 0; k < 26; k++) {
+            for (int i = 0; i < 26; i++)
+                if (dis[i][k] < Integer.MAX_VALUE) {
+                    for (int j = 0; j < 26; j++) {
+                        if (dis[k][j] < Integer.MAX_VALUE) {
+                            dis[i][j] = Math.min(dis[i][j], dis[i][k] + dis[k][j]);
+                        }
+                    }
+                }
+        }
+        long ans = 0L;
+        for (int i = 0; i < source.length(); i++) {
+            int c1 = source.charAt(i) - 'a';
+            int c2 = target.charAt(i) - 'a';
+            if (dis[c1][c2] == Integer.MAX_VALUE) {
+                return -1L;
+            } else {
+                ans += (long)dis[c1][c2];
+            }
+        }
+        return ans;
+    }
+}
+________________________________________________________
+
+Intuition :
+Each character conversion can be seen as a directed edge in a graph of 26 lowercase letters, with the edge weight equal to the conversion cost. Since multiple conversions can be chained together, converting one character to another may be cheaper through intermediate characters. 
+
+Therefore, the problem reduces to finding the minimum cost path between every pair of characters. Once these minimum costs are known, converting the entire string is simply the sum of independent character-wise conversion costs.
+_______________________________________________________
+
+Approach :
+Model the 26 lowercase letters as nodes in a graph.
+
+Initialize a 26 × 26 distance matrix where dis[i][j] represents the minimum cost to convert character i to j.
+Set dis[i][i] = 0 and initialize direct conversions using the given original, changed, and cost arrays, keeping the minimum cost if multiple edges exist.
+
+Apply the Floyd–Warshall algorithm to compute the minimum conversion cost between all pairs of characters.
+
+Iterate through each index of source and target:
+For characters source[i] → target[i], add dis[c1][c2] to the total cost.
+If any conversion is impossible (distance is infinity), return -1.
+
+Return the total accumulated cost.
+_______________________________________________________
+
+Complexity :
+Time complexity: O(26^3 + n)
+Space complexity: O(26^2)
