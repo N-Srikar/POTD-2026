@@ -1,0 +1,111 @@
+2977. Minimum Cost to Convert String II
+You are given two 0-indexed strings source and target, both of length n and consisting of lowercase English characters. You are also given two 0-indexed string arrays original and changed, and an integer array cost, where cost[i] represents the cost of converting the string original[i] to the string changed[i].
+
+You start with the string source. In one operation, you can pick a substring x from the string, and change it to y at a cost of z if there exists any index j such that cost[j] == z, original[j] == x, and changed[j] == y. You are allowed to do any number of operations, but any pair of operations must satisfy either of these two conditions:
+1. The substrings picked in the operations are source[a..b] and source[c..d] with either b < c or d < a. In other words, the indices picked in both operations are disjoint.
+2. The substrings picked in the operations are source[a..b] and source[c..d] with a == c and b == d. In other words, the indices picked in both operations are identical.
+
+Return the minimum cost to convert the string source to the string target using any number of operations. If it is impossible to convert source to target, return -1.
+
+Note that there may exist indices i, j such that original[j] == original[i] and changed[j] == changed[i].
+_______________________________________________________
+
+Code :
+class Solution {
+    public long minimumCost(String source, String target, String[] original, String[] changed, int[] cost) {
+        HashMap<String, Integer> index = new HashMap<>();
+        for (String o : original) {
+            if (!index.containsKey(o)) {
+                index.put(o, index.size());
+            }
+        }
+        for (String c : changed) {
+            if (!index.containsKey(c)) {
+                index.put(c, index.size());
+            }
+        }
+        long[][] dis = new long[index.size()][index.size()];
+        for (int i = 0; i < dis.length; i++) {
+            Arrays.fill(dis[i], Long.MAX_VALUE);
+            dis[i][i] = 0;
+        }
+        for (int i = 0; i < cost.length; i++) {
+            dis[index.get(original[i])][index.get(changed[i])] = Math.min(dis[index.get(original[i])][index.get(changed[i])], (long)cost[i]);
+        }
+        for (int k = 0; k < dis.length; k++) {
+            for (int i = 0; i < dis.length; i++)
+                if (dis[i][k] < Long.MAX_VALUE) {
+                    for (int j = 0; j < dis.length; j++) {
+                        if (dis[k][j] < Long.MAX_VALUE) {
+                            dis[i][j] = Math.min(dis[i][j], dis[i][k] + dis[k][j]);
+                        }
+                    }
+                }
+        }
+        HashSet<Integer> set = new HashSet<>();
+        for (String o : original) {
+            set.add(o.length());
+        }
+        long[] dp = new long[target.length() + 1];
+        Arrays.fill(dp, Long.MAX_VALUE);
+        dp[0] = 0L;
+        for (int i = 0; i < target.length(); i++) {
+            if (dp[i] == Long.MAX_VALUE) {
+                continue;
+            }
+            if (target.charAt(i) == source.charAt(i)) {
+                dp[i + 1] = Math.min(dp[i + 1], dp[i]);
+            }
+            for (int t : set) {
+                if (i + t >= dp.length) {
+                    continue;
+                }
+                int c1 = index.getOrDefault(source.substring(i, i + t), -1);
+                int c2 = index.getOrDefault(target.substring(i, i + t), -1);
+                if (c1 >= 0 && c2 >= 0 && dis[c1][c2] < Long.MAX_VALUE) {
+                    dp[i + t] = Math.min(dp[i + t], dp[i] + dis[c1][c2]);
+                }
+            }
+        }
+        return dp[dp.length - 1] == Long.MAX_VALUE ? -1L : dp[dp.length - 1];
+    }
+}
+________________________________________________________
+
+Intuition :
+Unlike the first version where characters were converted independently, here we can convert entire substrings in a single operation. Each substring conversion has a cost, and conversions can be chained through intermediate substrings, meaning the cheapest conversion between two substrings may involve multiple steps.
+
+This naturally forms a graph of substrings, where each unique substring appearing in original or changed is a node, and conversions are directed edges with weights. To minimize total cost, we must first compute the minimum conversion cost between all substring pairs.
+
+Once these optimal substring conversion costs are known, the problem becomes a string DP problem: deciding how to partition the source string into disjoint segments and convert each segment (or leave it unchanged) to match the target string at minimum total cost.
+________________________________________________________
+
+Approach :
+Index Substrings
+Assign a unique index to every distinct substring appearing in original or changed.
+
+All-Pairs Minimum Conversion Cost :
+Build a distance matrix dis, where dis[i][j] is the minimum cost to convert substring i to substring j.
+Initialize direct conversions using the given arrays.
+Run the Floyd–Warshall algorithm to compute minimum costs between all substring pairs.
+
+Prepare Valid Lengths
+Collect all distinct substring lengths from original. Only these lengths can be used for conversion operations.
+
+Dynamic Programming on the String :
+Let dp[i] be the minimum cost to convert source[0..i) to target[0..i).
+Initialize dp[0] = 0.
+
+For each position i:
+If characters already match, propagate dp[i] to dp[i+1].
+
+For every valid substring length t:
+If source[i..i+t) can be converted to target[i..i+t) using the precomputed costs, relax dp[i+t].
+
+Final Answer
+If dp[n] is unreachable, return -1; otherwise return dp[n].
+________________________________________________________
+
+Complexity :
+Time complexity: O(S^3+n⋅L)
+Space complexity: O(S^2+n)

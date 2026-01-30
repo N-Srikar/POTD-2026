@@ -1,0 +1,65 @@
+Interleave the First Half of the Queue with Second Half
+Given a queue q[] of even size. Your task is to rearrange the queue by interleaving its first half with the second half.
+
+Interleaving is the process of mixing two sequences by alternating their elements while preserving their relative order.
+In other words, Interleaving means place the first element from the first half and then first element from the 2nd half and again second element from the first half and then second element from the 2nd half and so on....
+________________________________________________________
+
+Code :
+class Solution {
+    public void rearrangeQueue(Queue<Integer> q) {
+        int n = q.size();
+        int half = n / 2;
+        Stack<Integer> st = new Stack<>();
+
+        for (int i = 0; i < half; i++) {
+            st.push(q.poll());
+        }
+
+        while (!st.isEmpty()) {
+            q.offer(st.pop());
+        }
+
+        for (int i = 0; i < half; i++) {
+            q.offer(q.poll());
+        }
+
+        for (int i = 0; i < half; i++) {
+            st.push(q.poll());
+        }
+
+        while (!st.isEmpty()) {
+            q.offer(st.pop());
+            q.offer(q.poll());
+        }
+    }
+}
+_______________________________________________________
+
+Intuition :
+The queue has an even number of elements and is conceptually divided into two halves:
+First half: front part of the queue
+Second half: remaining elements
+
+The goal is to interleave these two halves while preserving the relative order within each half.
+Since a queue only allows access from the front, we use an auxiliary stack to temporarily reverse elements and help reposition them correctly.
+_______________________________________________________
+
+Approach :
+Let n be the size of the queue and half = n / 2.
+Push the first half of the queue into a stack (this reverses their order).
+Pop all elements from the stack back into the queue.
+Move the first half of the queue to the back to restore original order separation.
+Again push the first half into the stack.
+
+Now interleave:
+Pop one element from the stack (from first half)
+Poll one element from the queue (from second half)
+Add both back to the queue in alternating order
+
+The queue is now interleaved as required.
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(n)
