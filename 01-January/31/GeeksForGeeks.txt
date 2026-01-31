@@ -1,0 +1,155 @@
+Implement k Queues in a Single Array
+You are given two integers n and k. Your task is to implement a class kQueues that uses a single array of size n to simulate k independent queues.
+
+The class should support the following operations:
+enqueue(x, i) → Adds the element x into the i-th queue.
+dequeue(i) → Removes the front element from the i-th queue and returns it. Returns -1 if the queue is empty.
+isEmpty(i) → Returns true if i-th queue is empty, else return false.
+isFull() → Returns true if the array is completely full and no more elements can be inserted, otherwise false.
+________________________________________________________
+
+Code :
+class kQueues {
+    int[] arr;
+    int[] front, rear, next;
+    int free;
+    int n, k;
+
+    kQueues(int n, int k) {
+        this.n = n;
+        this.k = k;
+
+        arr = new int[n];
+        front = new int[k];
+        rear = new int[k];
+        next = new int[n];
+
+        for (int i = 0; i < k; i++) {
+            front[i] = -1;
+            rear[i] = -1;
+        }
+
+        for (int i = 0; i < n - 1; i++) {
+            next[i] = i + 1;
+        }
+        next[n - 1] = -1;
+
+        free = 0;
+    }
+
+    void enqueue(int x, int i) {
+        if (free == -1) return;
+
+        int idx = free;
+        free = next[idx];
+
+        arr[idx] = x;
+        next[idx] = -1;
+
+        if (front[i] == -1) {
+            front[i] = idx;
+            rear[i] = idx;
+        } else {
+            next[rear[i]] = idx;
+            rear[i] = idx;
+        }
+    }
+
+    int dequeue(int i) {
+        if (front[i] == -1) return -1;
+
+        int idx = front[i];
+        front[i] = next[idx];
+
+        next[idx] = free;
+        free = idx;
+
+        if (front[i] == -1) {
+            rear[i] = -1;
+        }
+
+        return arr[idx];
+    }
+
+    boolean isEmpty(int i) {
+        return front[i] == -1;
+    }
+
+    boolean isFull() {
+        return free == -1;
+    }
+}
+________________________________________________________
+
+Intuition :
+We need to simulate k independent queues using a single array of size n, while supporting efficient enqueue and dequeue operations.
+The main challenge is space sharing: all queues must dynamically use the same array without wasting space.
+
+To achieve this, we treat the array as a pool of free slots and link elements using indices, similar to a linked list stored inside an array.
+
+This allows:
+Any queue to use any free position.
+Constant-time enqueue and dequeue.
+Full utilization of the array.
+_______________________________________________________
+
+Approach :
+We maintain the following data structures:
+arr[n]
+Stores the actual elements.
+
+front[k]
+Stores the front index of each queue.
+
+rear[k]
+Stores the rear index of each queue.
+
+next[n]
+Acts as a link:
+For queue elements → points to the next element in the same queue.
+For free slots → forms a linked list of free indices.
+
+free
+Points to the first free index in the array.
+_______________________________________________________
+
+Initialization
+Initialize all front[i] = -1 and rear[i] = -1 (all queues empty).
+Initialize next[i] = i + 1 for 0 ≤ i < n-1, and next[n-1] = -1.
+Set free = 0 (start of free list).
+
+enqueue(x, i) :
+If free == -1, the array is full → do nothing.
+Take index idx = free.
+Update free = next[idx].
+Insert x into arr[idx].
+If queue i is empty:
+front[i] = rear[i] = idx
+Else:
+next[rear[i]] = idx
+rear[i] = idx
+Set next[idx] = -1.
+
+dequeue(i) : 
+If queue i is empty → return -1.
+Take index idx = front[i].
+Update front[i] = next[idx].
+Add idx back to free list:
+next[idx] = free
+free = idx
+Return arr[idx].
+
+isEmpty(i) : Return front[i] == -1.
+
+isFull() : Return free == -1.
+_______________________________________________________
+
+Complexity :
+Time Complexity:
+enqueue → O(1)
+dequeue → O(1)
+isEmpty → O(1)
+isFull → O(1)
+
+Space Complexity:
+O(n + k)

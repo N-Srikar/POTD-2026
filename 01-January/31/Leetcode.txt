@@ -1,0 +1,54 @@
+744. Find Smallest Letter Greater Than Target
+You are given an array of characters letters that is sorted in non-decreasing order, and a character target. There are at least two different characters in letters.
+
+Return the smallest character in letters that is lexicographically greater than target. If such a character does not exist, return the first character in letters.
+_______________________________________________________
+
+Code :
+class Solution {
+    public char nextGreatestLetter(char[] letters, char target) {
+        int low=0, high=letters.length -1;
+        int mid;
+        int pos=-1;
+        while(low<=high)
+        {
+            mid = (low+high)/2;
+            if(letters[mid]>target)
+            {
+                pos=mid;
+                high = mid-1;
+            }
+            else
+            {
+                low=mid+1;
+            }
+        }
+      return pos == -1 ? letters[0] : letters[pos];
+
+    }
+}
+_______________________________________________________
+
+Intuition
+The letters array is already sorted, so the smallest character that is strictly greater than the target must appear at or after the first position where a character exceeds the target. If all characters are less than or equal to the target, the answer wraps around and becomes the first character in the array. This wrap-around behavior makes binary search an ideal approach.
+_______________________________________________________
+
+Approach :
+Use binary search on the sorted letters array.
+Maintain a variable to store the position of the smallest character found so far that is greater than the target.
+
+If the middle character is greater than the target:
+Record its position.
+Continue searching the left half to find a smaller valid character.
+
+If the middle character is less than or equal to the target:
+Search the right half.
+
+After the search:
+If a valid position was found, return that character.
+Otherwise, return the first character in the array.
+_______________________________________________________
+
+Complexity :
+Time complexity: O(logn)
+Space complexity: O(1)
