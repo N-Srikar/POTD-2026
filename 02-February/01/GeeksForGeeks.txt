@@ -1,0 +1,63 @@
+K Sized Subarray Maximum
+Given an array arr[] of positive integers and an integer k. You have to find the maximum value for each contiguous subarray of size k. Return an array of maximum values corresponding to each contiguous subarray.
+_______________________________________________________
+
+Code :
+class Solution {
+    public ArrayList<Integer> maxOfSubarrays(int[] arr, int k) {
+        ArrayList<Integer> result = new ArrayList<>();
+        Deque<Integer> dq = new ArrayDeque<>();
+
+        for (int i = 0; i < arr.length; i++) {
+            while (!dq.isEmpty() && dq.peekFirst() <= i - k) {
+                dq.pollFirst();
+            }
+
+            while (!dq.isEmpty() && arr[dq.peekLast()] <= arr[i]) {
+                dq.pollLast();
+            }
+
+            dq.offerLast(i);
+
+            if (i >= k - 1) {
+                result.add(arr[dq.peekFirst()]);
+            }
+        }
+
+        return result;
+    }
+}
+_______________________________________________________
+
+Intuition :
+For every contiguous subarray of size k, we need to efficiently determine the maximum element.
+Recomputing the maximum by scanning all k elements for each window would lead to a slow solution.
+
+The key idea is to maintain only useful elements for the current window:
+Any element smaller than a newer element can never become a maximum again.
+Elements that move out of the window should be discarded.
+
+A deque (double-ended queue) helps maintain candidates for the maximum in an optimal way.
+_______________________________________________________
+
+Approach :
+Use a deque to store indices of array elements.
+Maintain the deque such that:
+Indices are always within the current window.
+Values corresponding to indices are in decreasing order.
+
+Traverse the array from left to right:
+Remove indices from the front if they are outside the current window (i - k).
+Remove indices from the back whose values are less than or equal to the current element.
+Add the current index to the back of the deque.
+
+Once the first window of size k is formed (i >= k - 1):
+The front of the deque holds the index of the maximum element.
+Add that value to the result list.
+
+Continue this process for all elements.
+________________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(k)

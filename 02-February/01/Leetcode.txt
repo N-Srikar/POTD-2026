@@ -1,0 +1,41 @@
+3010. Divide an Array Into Subarrays With Minimum Cost I
+You are given an array of integers nums of length n.
+The cost of an array is the value of its first element.
+You need to divide nums into 3 disjoint contiguous subarrays.
+Return the minimum possible sum of the cost of these subarrays.
+________________________________________________________
+
+Code :
+class Solution {
+    public int minimumCost(int[] A) {
+        int a = 51, b = 51;
+
+        for (int i = 1; i < A.length; i++) {
+            if (A[i] < a) {
+                b = a;
+                a = A[i];
+            } else if (A[i] < b)
+                b = A[i];
+
+            if (a == 1 && b == 1) break;
+        }
+
+        return A[0] + a + b;
+    }
+}
+_______________________________________________________
+
+Intuition :
+The array must be split into three contiguous subarrays, and the cost of each subarray is simply its first element. Since the first subarray always starts at index 0, its cost is fixed as nums[0]. The remaining two subarrays will start at two positions chosen from the rest of the array. To minimize the total cost, we want the starting values of these two subarrays to be as small as possible. Hence, choosing the smallest and second smallest values from the remaining elements leads to the minimum total cost.
+_______________________________________________________
+
+Approach :
+The cost of the first subarray is always nums[0].
+Traverse the array from index 1 onward to find the smallest (a) and second smallest (b) values.
+These two values represent the starting costs of the second and third subarrays.
+Add nums[0] + a + b and return the result.
+_______________________________________________________
+
+Complexity :
+Time complexity: O(n)
+Space complexity: O(1)
