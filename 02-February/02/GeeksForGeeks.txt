@@ -1,0 +1,69 @@
+Max Circular Subarray Sum
+You are given a circular array arr[] of integers, find the maximum possible sum of a non-empty subarray. In a circular array, the subarray can start at the end and wrap around to the beginning. Return the maximum non-empty subarray sum, considering both non-wrapping and wrapping cases.
+_______________________________________________________
+
+Code : 
+class Solution {
+    public int maxCircularSum(int arr[]) {
+        int totalSum = 0;
+        int maxSum = arr[0];
+        int curMax = 0;
+        int minSum = arr[0];
+        int curMin = 0;
+
+        for (int num : arr) {
+            curMax = Math.max(num, curMax + num);
+            maxSum = Math.max(maxSum, curMax);
+
+            curMin = Math.min(num, curMin + num);
+            minSum = Math.min(minSum, curMin);
+
+            totalSum += num;
+        }
+
+        if (maxSum < 0) return maxSum;  
+        return Math.max(maxSum, totalSum - minSum);
+    }
+}
+__________________________________________________________
+
+Intuition :
+In a circular array, the maximum subarray sum can occur in two different ways:
+
+Non-wrapping subarray
+The subarray lies completely within the array (no wraparound).
+This is exactly the classic Kadane’s Algorithm problem.
+
+Wrapping subarray
+The subarray wraps around the end of the array to the beginning.
+In this case:
+The maximum wrapping sum = total array sum − minimum subarray sum
+Why? Because removing the minimum-sum subarray leaves the maximum-sum circular subarray.
+
+We compute both possibilities and take the maximum of the two, while carefully handling the case when all elements are negative.
+_______________________________________________________
+
+Approach :
+Initialize variables to track:
+maxSum → maximum subarray sum (Kadane)
+minSum → minimum subarray sum
+curMax, curMin → running values for Kadane
+totalSum → sum of all elements
+
+Traverse the array once:
+Apply Kadane’s algorithm to compute maxSum
+Apply a modified Kadane to compute minSum
+Accumulate totalSum
+
+Handle edge case:
+If maxSum < 0, all elements are negative → return maxSum directly
+(wrapping would incorrectly give 0)
+
+Otherwise:
+Wrapping sum = totalSum - minSum
+Answer = max(maxSum, totalSum - minSum)
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(1)

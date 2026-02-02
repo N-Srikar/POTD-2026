@@ -1,0 +1,112 @@
+3013. Divide an Array Into Subarrays With Minimum Cost II
+You are given a 0-indexed array of integers nums of length n, and two positive integers k and dist.
+
+The cost of an array is the value of its first element. For example, the cost of [1,2,3] is 1 while the cost of [3,4,1] is 3.
+
+You need to divide nums into k disjoint contiguous subarrays, such that the difference between the starting index of the second subarray and the starting index of the kth subarray should be less than or equal to dist. In other words, if you divide nums into the subarrays nums[0..(i1 - 1)], nums[i1..(i2 - 1)], ..., nums[ik-1..(n - 1)], then ik-1 - i1 <= dist.
+
+Return the minimum possible sum of the cost of these subarrays.
+_______________________________________________________
+
+class Solution {
+
+    public long minimumCost(int[] nums, int k, int dist) {
+
+        int n = nums.length;
+        long result = Long.MAX_VALUE;
+        long windowSum = 0L;
+
+        java.util.TreeSet<Integer> using = new java.util.TreeSet<>(
+                (a, b) -> nums[a] == nums[b] ? a - b : nums[a] - nums[b]
+        );
+
+        java.util.TreeSet<Integer> waiting = new java.util.TreeSet<>(
+                (a, b) -> nums[a] == nums[b] ? a - b : nums[a] - nums[b]
+        );
+
+        for (int i = 1; i <= dist + 1; i++) {
+            using.add(i);
+            windowSum += nums[i];
+        }
+
+        while (using.size() > k - 1) {
+            int idx = using.pollLast();
+            windowSum -= nums[idx];
+            waiting.add(idx);
+        }
+
+        result = Math.min(result, windowSum);
+
+        for (int i = 1; i + dist + 1 < n; i++) {
+
+            waiting.add(i + dist + 1);
+
+            if (using.contains(i)) {
+                using.remove(i);
+                windowSum -= nums[i];
+
+                int idx = waiting.pollFirst();
+                using.add(idx);
+                windowSum += nums[idx];
+
+            } else {
+                waiting.remove(i);
+
+                int wMin = waiting.first();
+                int uMax = using.last();
+
+                if (nums[wMin] < nums[uMax]) {
+                    using.remove(uMax);
+                    waiting.add(uMax);
+                    windowSum -= nums[uMax];
+
+                    waiting.remove(wMin);
+                    using.add(wMin);
+                    windowSum += nums[wMin];
+                }
+            }
+
+            result = Math.min(result, windowSum);
+        }
+
+        return result + nums[0];
+    }
+}
+________________________________________________________
+
+Intuition : 
+The first subarray always starts at index 0, so its cost is fixed as nums[0]. The remaining k−1 subarrays must start at indices chosen from a sliding window of valid positions, constrained by
+ik−1 − i1 ≤ dist.
+This means all starting indices for subarrays 2 through k must lie within a window of size dist + 1.
+
+To minimize the total cost, we want the sum of the smallest k−1 values within each valid window. As the window slides, elements enter and leave, so we need a data structure that can:
+Maintain the smallest k−1 elements dynamically
+Efficiently update the sum as the window moves
+
+This is achieved by splitting elements into two ordered sets:
+using: the currently chosen k−1 smallest elements (contributing to cost)
+waiting: the remaining candidates in the window
+_______________________________________________________
+
+Approach :
+Fix the first subarray at index 0; its cost is nums[0].
+Consider indices [1 … dist+1] as the initial window for selecting starts of the remaining subarrays.
+
+Use two balanced BSTs (TreeSets):
+using: stores the smallest k−1 elements in the window
+waiting: stores the rest
+
+Initialize the window and move the largest elements from using to waiting until using has exactly k−1 elements, tracking their sum.
+
+Slide the window one step at a time:
+Add the new index entering the window.
+Remove the index leaving the window.
+Rebalance using and waiting so using always contains the smallest k−1 elements.
+
+Track the minimum sum of elements in using across all windows.
+Add nums[0] to this minimum sum and return the result.
+_______________________________________________________
+
+Complexity : 
+Time complexity: O(nlogn)
+Space complexity: O(n)
