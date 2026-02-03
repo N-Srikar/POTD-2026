@@ -1,0 +1,54 @@
+3637. Trionic Array I
+You are given an integer array nums of length n.
+
+An array is trionic if there exist indices 0 < p < q < n − 1 such that:
+nums[0...p] is strictly increasing,
+nums[p...q] is strictly decreasing,
+nums[q...n − 1] is strictly increasing.
+Return true if nums is trionic, otherwise return false.
+________________________________________________________
+
+Code :
+class Solution {
+    public boolean isTrionic(int[] nums) {
+        int n = nums.length;
+        int i = 1;
+        while (i < n && nums[i - 1] < nums[i]) {
+            i++;
+        }
+        int p = i - 1;
+        while (i < n && nums[i - 1] > nums[i]) {
+            i++;
+        }
+        int q = i - 1;
+        while (i < n && nums[i - 1] < nums[i]) {
+            i++;
+        }
+        int flag = i - 1;
+        return (p != 0) && (q != p) && (flag == n - 1 && flag != q);
+    }
+}
+_______________________________________________________
+
+Intuition :
+A trionic array has a very specific shape: it must increase strictly, then decrease strictly, and finally increase strictly again. Since these segments are contiguous and must appear in this exact order, we can detect the pattern with a single left-to-right scan. By advancing pointers while the required monotonic condition holds, we can identify the boundaries of each segment and then validate that all three segments are non-empty and correctly ordered.
+_______________________________________________________
+
+Approach :
+Start scanning from index 1 and move forward while the array is strictly increasing.
+Mark the end of this first increasing segment as p.
+Continue scanning while the array is strictly decreasing.
+Mark the end of the decreasing segment as q.
+Continue scanning while the array is strictly increasing again.
+
+Finally, check the validity conditions:
+The first increasing segment must contain at least one element (p ≠ 0).
+The decreasing segment must be non-empty (q ≠ p).
+The last increasing segment must be non-empty and must reach the end of the array (flag = n − 1 and flag ≠ q).
+
+Return true if all conditions are satisfied; otherwise return false.
+_______________________________________________________
+
+Complexity :
+Time complexity: O(n)
+Space complexity: O(1)
