@@ -1,0 +1,46 @@
+Last Moment Before All Ants Fall Out
+We have a wooden plank of length n units. Some ants are walking on the plank, each ant moves with a speed of 1 unit per second, with some moving left and others right.
+When two ants moving in two different directions meet at some point, they change their directions and continue moving again. Assume changing directions does not take any additional time. When an ant reaches one end of the plank at a time t, it falls out of the plank immediately.
+
+Given an integer n and two integer arrays left[] and right[], the positions of the ants moving to the left and the right, return the time when the last ant(s) fall out of the plank.
+_______________________________________________________
+
+Code :
+class Solution {
+    public int getLastMoment(int n, int[] left, int[] right) {
+        int maxLeft = 0;
+        for (int pos : left) {
+            maxLeft = Math.max(maxLeft, pos);
+        }
+        
+        int maxRight = 0;
+        for (int pos : right) {
+            maxRight = Math.max(maxRight, n - pos);
+        }
+        
+        return Math.max(maxLeft, maxRight);
+    }
+}
+_______________________________________________________
+
+Intuition :
+Although ants appear to change direction when they meet, this interaction can be simplified. When two ants collide and reverse directions, the result is equivalent to them passing through each other without interaction—only their identities swap. Since all ants move at the same speed, the time at which an ant falls off the plank depends only on its initial position and direction, not on collisions.
+
+So, we can ignore all collisions and treat each ant as moving straight until it falls off.
+_______________________________________________________
+
+Approach :
+For ants moving left:
+An ant at position pos will fall off after pos seconds.
+The last such ant falls at max(pos) among left[].
+
+For ants moving right:
+An ant at position pos will fall off after n - pos seconds.
+The last such ant falls at max(n - pos) among right[].
+
+The answer is the maximum of these two times, since we want the moment when the last ant falls off the plank.
+________________________________________________________
+
+Complexity :
+Time Complexity: O(L + R)
+Space Complexity: O(1)

@@ -1,0 +1,136 @@
+3640. Trionic Array II
+You are given an integer array nums of length n.
+
+A trionic subarray is a contiguous subarray nums[l...r] (with 0 <= l < r < n) for which there exist indices l < p < q < r such that:
+nums[l...p] is strictly increasing,
+nums[p...q] is strictly decreasing,
+nums[q...r] is strictly increasing.
+
+Return the maximum sum of any trionic subarray in nums.
+_______________________________________________________
+
+Code :
+class Solution {
+    public long maxSumTrionic(int[] nums) {
+        int state = 0;
+        long sum = 0;
+        long max =  Long.MIN_VALUE;
+        long contSum = 0;
+
+        for (int i = 1; i < nums.length; i++){
+            if (state == 0){
+                if (nums[i] > nums[i-1]){
+                    sum = sum + nums[i] + nums[i-1];
+                    state = 1;
+                }
+            }
+            else if (state == 1){
+                if (nums[i] > nums[i-1]){
+                    sum =Math.max(sum + nums[i], nums[i] + nums[i-1]);
+                }
+                else if (nums[i] == nums[i-1]){
+                    sum = 0;
+                    state = 0;
+                }
+                else {
+                    sum = sum + nums[i];
+                    state = 2;
+                }
+            }
+            else if (state == 2){
+                contSum = 0;
+                if (nums[i] < nums[i-1]){
+                    sum = sum + nums[i];
+                }
+                else if (nums[i] == nums[i-1]){
+                    sum = 0;
+                    state = 0;
+                }
+                else {
+                    sum = sum + nums[i];
+                    max = Math.max(max,sum);
+                    contSum = contSum + nums[i] + nums[i-1];
+                    state = 3;
+                }
+            }
+            else {
+                if (nums[i] > nums[i-1]){
+                    sum = sum + nums[i];
+                    contSum = Math.max(contSum + nums[i],nums[i] + nums[i-1]);
+                    max = Math.max(max,sum);
+                }
+                else if (nums[i] == nums[i-1]){
+                    sum = 0;
+                    state = 0;
+                }
+                else {
+                    sum = contSum + nums[i];
+                    state = 2;
+                }
+            }
+
+        }
+        return max;
+    }
+}
+_______________________________________________________
+
+Intuition :
+To extend the idea behind checking whether an array is trionic, we can model the process as a state machine that scans the array in one pass. A trionic subarray must strictly increase, then strictly decrease, and then strictly increase again. While scanning, we also want to maximize the sum of such a subarray.
+
+Because the pattern can overlap (a new trionic subarray may start inside an existing increasing run), we must be able to “restart smartly” instead of resetting everything blindly. This leads to tracking partial sums in a way similar to Kadane’s algorithm, but adapted to the trionic shape.
+
+By carefully managing states and transitions, we can detect all valid trionic subarrays and compute the maximum sum in O(n) time and O(1) space.
+_______________________________________________________
+
+Approach :
+We use a 4-state finite state machine:
+State 0: Not currently building a trionic subarray.
+State 1: First strictly increasing segment.
+State 2: Strictly decreasing segment.
+State 3: Second strictly increasing segment.
+We iterate from left to right and transition between states based on comparisons between nums[i] and nums[i-1].
+
+State 0 → State 1 (Start first increasing)
+If nums[i] > nums[i-1], we begin the first increasing segment.
+Initialize the running sum.
+
+State 1 (First increasing)
+nums[i] > nums[i-1]
+Extend the segment.
+Update sum with restart logic:
+sum = max(sum + nums[i], nums[i-1] + nums[i])
+nums[i] == nums[i-1]
+Strictness violated → reset to State 0.
+nums[i] < nums[i-1]
+First peak found → transition to State 2 and include current element.
+
+State 2 (Decreasing)
+nums[i] < nums[i-1]
+Extend the decreasing segment.
+nums[i] == nums[i-1]
+Strictness violated → reset to State 0.
+nums[i] > nums[i-1]
+Valley found → transition to State 3.
+Update answer and initialize contSum, which tracks the best reusable increasing base.
+
+State 3 (Second increasing)
+nums[i] > nums[i-1]
+Extend the segment.
+Update answer and contSum with restart logic.
+nums[i] == nums[i-1]
+Strictness violated → reset to State 0.
+nums[i] < nums[i-1]
+Pattern breaks but may overlap:
+Start a new decreasing phase using contSum.
+Transition back to State 2.
+
+Throughout the scan:
+sum tracks the current trionic subarray sum.
+contSum tracks the best reusable increasing prefix.
+max stores the maximum trionic subarray sum found.
+________________________________________________________
+
+Complexity :
+Time complexity: O(n)
+Space complexity: O(1)
