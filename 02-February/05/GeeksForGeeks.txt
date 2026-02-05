@@ -1,0 +1,60 @@
+Maximize Number of 1's
+Given a binary array arr[] containing only 0s and 1s and an integer k, you are allowed to flip at most k 0s to 1s. Find the maximum number of consecutive 1's that can be obtained in the array after performing the operation at most k times.
+______________________________________________________
+
+Code :
+class Solution {
+    public int maxOnes(int arr[], int k) {
+        int left = 0;
+        int zeroCount = 0;
+        int maxLen = 0;
+
+        for (int right = 0; right < arr.length; right++) {
+            if (arr[right] == 0) {
+                zeroCount++;
+            }
+
+            while (zeroCount > k) {
+                if (arr[left] == 0) {
+                    zeroCount--;
+                }
+                left++;
+            }
+
+            maxLen = Math.max(maxLen, right - left + 1);
+        }
+
+        return maxLen;
+    }
+}
+_______________________________________________________
+
+Intuition :
+We want the longest contiguous segment that can be turned into all 1s by flipping at most k zeros.
+Instead of explicitly flipping values, we can think in reverse:
+Find the longest subarray that contains at most k zeros.
+If a window has at most k zeros, we can flip those zeros and make the entire window all 1s.
+
+This naturally leads to a sliding window approach.
+_______________________________________________________
+
+Approach :
+Use two pointers left and right to represent a sliding window.
+Maintain a count of zeros (zeroCount) inside the current window.
+
+Expand the window by moving right:
+If arr[right] == 0, increment zeroCount.
+
+If zeroCount > k:
+Shrink the window from the left until zeroCount <= k.
+Decrement zeroCount when a zero leaves the window.
+
+At each step, update the maximum window length:
+maxLen = max(maxLen, right - left + 1)
+
+Return maxLen.
+________________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(1)
