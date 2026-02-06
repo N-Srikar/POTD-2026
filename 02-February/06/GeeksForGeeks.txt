@@ -1,0 +1,76 @@
+Happiest Triplet
+You are given three arrays a[], b[], c[] of the same size . Find a triplet such that (maximum-minimum) in that triplet is the minimum of all the triplets. A triplet should be selected so that it should have one number from each of the three given arrays. This triplet is the happiest among all the possible triplets. Print the triplet in decreasing order.
+
+Note: If there are 2 or more smallest difference triplets, then the one with the smallest sum of its elements should be displayed.
+_______________________________________________________
+
+Code :
+class Solution {
+    int[] smallestDiff(int a[], int b[], int c[]) {
+        Arrays.sort(a);
+        Arrays.sort(b);
+        Arrays.sort(c);
+
+        int i = 0, j = 0, k = 0;
+        int bestDiff = Integer.MAX_VALUE;
+        int bestSum = Integer.MAX_VALUE;
+        int x = 0, y = 0, z = 0;
+
+        while (i < a.length && j < b.length && k < c.length) {
+            int minVal = Math.min(a[i], Math.min(b[j], c[k]));
+            int maxVal = Math.max(a[i], Math.max(b[j], c[k]));
+            int diff = maxVal - minVal;
+            int sum = a[i] + b[j] + c[k];
+
+            if (diff < bestDiff || (diff == bestDiff && sum < bestSum)) {
+                bestDiff = diff;
+                bestSum = sum;
+                x = a[i];
+                y = b[j];
+                z = c[k];
+            }
+
+            if (minVal == a[i]) i++;
+            else if (minVal == b[j]) j++;
+            else k++;
+        }
+
+        int[] res = new int[]{x, y, z};
+        Arrays.sort(res);
+        return new int[]{res[2], res[1], res[0]};
+    }
+}
+_______________________________________________________
+
+Intuition :
+We need to choose one element from each of the three arrays such that the difference
+(maximum − minimum) among the chosen three numbers is as small as possible.
+A brute-force approach would try all possible triplets, which is inefficient.
+The key observation is:
+If the arrays are sorted, the minimum difference can be optimized by moving pointers intelligently.
+At any point, the minimum element among the three is the limiting factor; increasing it may reduce the range.
+
+This naturally leads to a three-pointer technique, similar to merging sorted arrays.
+_______________________________________________________
+
+Approach :
+Sort all three arrays.
+Initialize three pointers i, j, k at index 0 for arrays a, b, and c.
+
+At each step:
+Find minVal = min(a[i], b[j], c[k])
+Find maxVal = max(a[i], b[j], c[k])
+Compute diff = maxVal - minVal
+
+Track the best triplet based on:
+Smaller difference first
+If difference is same, choose the triplet with smaller sum
+
+Move the pointer that points to the minimum element, since increasing the minimum may reduce the range.
+Stop when any pointer reaches the end.
+Return the selected triplet in decreasing order.
+________________________________________________________
+
+Complexity :
+Time Complexity: O(n log n)
+Space Complexity: O(1)

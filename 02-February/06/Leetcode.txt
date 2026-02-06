@@ -1,0 +1,44 @@
+3634. Minimum Removals to Balance Array
+You are given an integer array nums and an integer k.
+An array is considered balanced if the value of its maximum element is at most k times the minimum element.
+You may remove any number of elements from nums​​​​​​​ without making it empty.
+Return the minimum number of elements to remove so that the remaining array is balanced.
+
+Note: An array of size 1 is considered balanced as its maximum and minimum are equal, and the condition always holds true.
+_______________________________________________________
+
+Code :
+class Solution {
+    public int minRemoval(int[] nums, int k) {
+        Arrays.sort(nums);
+        int i = 0;
+        int maxLen = 0;
+
+        for (int j = 0; j < nums.length; j++) {
+            while ((long) nums[j] > (long) nums[i] * k) {
+                i++;
+            }
+            maxLen = Math.max(maxLen, j - i + 1);
+        }
+
+        return nums.length - maxLen;
+    }
+}
+_______________________________________________________
+
+Intuition :
+Instead of directly thinking about which elements to remove, it is easier to think about which elements to keep. A balanced array must satisfy max ≤ min × k. After sorting the array, any valid balanced subset will appear as a contiguous subarray, because the minimum and maximum of the subset are simply its first and last elements. Therefore, the goal becomes finding the longest subarray where this condition holds, and removing all other elements.
+_______________________________________________________
+
+Approach :
+Sort the array in ascending order.
+Use a sliding window with two pointers i (left) and j (right).
+For each j, treat nums[j] as the current maximum.
+While the condition nums[j] > nums[i] × k is violated, increment i to shrink the window.
+Track the maximum window length j − i + 1 that satisfies the condition.
+The minimum number of removals is n − maxLen, where n is the array length.
+_______________________________________________________
+
+Complexity :
+Time complexity: O(nlogn)
+Space complexity: O(logn)
