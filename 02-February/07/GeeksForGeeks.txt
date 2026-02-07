@@ -1,0 +1,54 @@
+Max sum in the configuration
+Given an integer array arr[]. Find the maximum value of the sum of i*arr[i] for all 0 ≤ i ≤ arr.size()-1. The only operation allowed is to rotate(clockwise or counterclockwise) the array any number of times.
+________________________________________________________
+
+Code :
+class Solution {
+    int maxSum(int[] arr) {
+        int n = arr.length;
+        int arrSum = 0;
+        int currVal = 0;
+
+        for (int i = 0; i < n; i++) {
+            arrSum += arr[i];
+            currVal += i * arr[i];
+        }
+
+        int maxVal = currVal;
+
+        for (int i = 1; i < n; i++) {
+            currVal = currVal + arrSum - n * arr[n - i];
+            maxVal = Math.max(maxVal, currVal);
+        }
+
+        return maxVal;
+    }
+}
+_______________________________________________________
+
+Intuition
+We are asked to maximize the value of sum_{i=0}^{n-1} i  * arr[i]
+over all possible rotations of the array.
+
+A brute-force approach would rotate the array n times and recompute the sum each time, leading to an (O(n^2)) solution, which is inefficient.
+
+The key insight is that the value of the expression for one rotation can be derived from the previous rotation in constant time. When the array is rotated, indices shift in a predictable way, allowing us to reuse previously computed results instead of recalculating everything from scratch.
+______________________________________________________
+
+Approach
+Compute:
+arrSum: the sum of all elements in the array.
+currVal: the value of (sum of i * arr[i]) for the original array.
+Initialize maxVal with currVal.
+
+For each rotation:
+Use the recurrence relation: currVal_{next} = currVal + arrSum - n \times arr[n - rotation]
+This formula accounts for how indices change after rotation.
+Update maxVal after each rotation.
+
+Return maxVal as the final answer.
+______________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(1)
