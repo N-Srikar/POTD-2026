@@ -1,0 +1,53 @@
+110. Balanced Binary Tree
+Given a binary tree, determine if it is height-balanced.
+________________________________________________________
+
+Code :
+class Solution {
+    public boolean isBalanced(TreeNode root) {
+        return checkHeight(root) != -1;
+    }
+
+    private int checkHeight(TreeNode node) {
+        if (node == null) {
+            return 0;
+        }
+
+        int leftHeight = checkHeight(node.left);
+        if (leftHeight == -1) return -1;
+
+        int rightHeight = checkHeight(node.right);
+        if (rightHeight == -1) return -1;
+
+        if (Math.abs(leftHeight - rightHeight) > 1) return -1;
+
+        return Math.max(leftHeight, rightHeight) + 1;
+    }
+}
+_______________________________________________________
+
+Intuition
+A binary tree is height-balanced if, for every node, the heights of its left and right subtrees differ by at most one. A naive solution would compute heights separately for each node, leading to repeated work. To optimize this, we can combine height computation and balance checking in a single depth-first traversal. By propagating an error signal upward as soon as an imbalance is detected, we avoid unnecessary calculations.
+_______________________________________________________
+
+Approach :
+Use a recursive DFS helper function that returns:
+The height of the subtree if it is balanced.
+-1 if the subtree is unbalanced.
+
+Recursively compute the height of the left subtree:
+If it returns -1, the subtree is unbalanced, so propagate -1.
+
+Recursively compute the height of the right subtree:
+If it returns -1, propagate -1.
+
+Check the height difference between left and right subtrees:
+If the difference exceeds 1, return -1.
+
+Otherwise, return 1 + max(leftHeight, rightHeight).
+The tree is balanced if the final result is not -1.
+_______________________________________________________
+
+Complexity :
+Time complexity: O(n)
+Space complexity: O(n)

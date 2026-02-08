@@ -1,0 +1,72 @@
+Maximum Product Subarray
+Given an array arr[] that contains positive and negative integers (may contain 0 as well). Find the maximum product that we can get in a subarray of arr[].
+_______________________________________________________
+
+Code :
+class Solution {
+    int maxProduct(int[] arr) {
+        int maxProd = arr[0];
+        int minProd = arr[0];
+        int ans = arr[0];
+
+        for (int i = 1; i < arr.length; i++) {
+            if (arr[i] < 0) {
+                int temp = maxProd;
+                maxProd = minProd;
+                minProd = temp;
+            }
+
+            maxProd = Math.max(arr[i], maxProd * arr[i]);
+            minProd = Math.min(arr[i], minProd * arr[i]);
+
+            ans = Math.max(ans, maxProd);
+        }
+
+        return ans;
+    }
+}
+________________________________________________________
+
+Intuition :
+When dealing with products, negative numbers change everything:
+A large positive product can become very small if multiplied by a negative.
+A very small (negative) product can become very large if multiplied by another negative.
+
+So at every index, we must track both:
+The maximum product ending at that index.
+The minimum product ending at that index.
+
+Why minimum?
+Because multiplying a negative minimum by a negative number can produce a new maximum.
+
+This makes the problem a modified version of Kadane’s Algorithm, extended for products.
+_______________________________________________________
+
+Approach :
+Initialize:
+maxProd = maximum product ending at current index
+minProd = minimum product ending at current index
+ans = overall maximum product found so far
+
+Start with the first element for all three.
+
+Traverse the array from index 1:
+If the current element is negative, swap maxProd and minProd
+(because sign flips).
+
+Update:
+maxProd = max(arr[i], maxProd * arr[i])
+minProd = min(arr[i], minProd * arr[i])
+Update ans = max(ans, maxProd)
+
+Return ans.
+
+This automatically handles:
+Zeroes (resetting products)
+Negative values
+Mixed positive/negative ranges
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(1)
