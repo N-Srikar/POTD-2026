@@ -1,0 +1,61 @@
+Find Kth Rotation
+Given an increasing sorted rotated array arr[] of distinct integers. The array is right-rotated k times. Find the value of k.
+_______________________________________________________
+
+Code :
+class Solution {
+    public int findKRotation(int arr[]) {
+        int n = arr.length;
+        int low = 0, high = n - 1;
+
+        while (low <= high) {
+            if (arr[low] <= arr[high]) {
+                return low;
+            }
+
+            int mid = low + (high - low) / 2;
+            int prev = (mid - 1 + n) % n;
+            int next = (mid + 1) % n;
+
+            if (arr[mid] <= arr[prev] && arr[mid] <= arr[next]) {
+                return mid;
+            }
+
+            if (arr[low] <= arr[mid]) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+        return 0;
+    }
+}
+_______________________________________________________
+
+Intuition :
+An increasing sorted array, when right-rotated k times, will have its smallest element shifted from index 0 to index k.
+So, if we can find the index of the minimum element, that index itself represents the number of rotations k.
+
+Because the array is: originally sorted, rotated and contains distinct elements,
+
+we can efficiently find the minimum element using binary search instead of linear scanning.
+________________________________________________________
+
+Approach :
+Use binary search on the array.
+Maintain two pointers: low and high.
+
+At each step:
+If arr[low] <= arr[high], the subarray is already sorted → low is the index of the minimum.
+Compute mid.
+Find prev and next indices of mid (circularly).
+If arr[mid] is smaller than both its neighbors, it is the minimum element → return mid.
+If the left half is sorted (arr[low] <= arr[mid]), the minimum lies in the right half → move low.
+Otherwise, the minimum lies in the left half → move high.
+
+The returned index is the number of rotations k.
+________________________________________________________
+
+Complexity :
+Time Complexity: O(log n)
+Space Complexity: O(1)

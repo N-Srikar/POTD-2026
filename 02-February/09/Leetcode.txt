@@ -1,0 +1,52 @@
+1382. Balance a Binary Search Tree
+Given the root of a binary search tree, return a balanced binary search tree with the same node values. If there is more than one answer, return any of them.
+
+A binary search tree is balanced if the depth of the two subtrees of every node never differs by more than 1.
+_______________________________________________________
+
+Code :
+class Solution {
+    List<Integer> nums;
+    public TreeNode balanceBST(TreeNode root) {
+        nums = new ArrayList<Integer>();
+        getNumbers(root);
+        TreeNode res = balanceTree(0,nums.size()-1);
+        return res;
+    }
+    private void getNumbers(TreeNode node){
+        if(node==null) return;
+        getNumbers(node.left);
+        nums.add(node.val);
+        getNumbers(node.right);
+    }
+    private TreeNode balanceTree(int l, int r){
+        if(l>r)return null;
+        int middleIdx = l+ ((r-l)/2);
+        TreeNode res = new TreeNode(nums.get(middleIdx));
+        res.left = balanceTree(l,middleIdx-1);
+        res.right = balanceTree(middleIdx+1,r);
+        return res;
+    }              
+}
+________________________________________________________
+
+Intuition :
+A key property of a Binary Search Tree is that an inorder traversal always yields the node values in sorted order. Instead of trying to rebalance the tree in place, we can take advantage of this property by first extracting all values into a sorted list. From a sorted list, constructing a balanced BST is straightforward: always choose the middle element as the root. This guarantees that the left and right subtrees are as balanced as possible, keeping the height difference within one.
+_______________________________________________________
+
+Approach :
+Perform an inorder traversal of the given BST and store all node values in a list.
+Since the traversal is inorder, the list will already be sorted.
+
+Use a divide-and-conquer strategy to rebuild the tree:
+Select the middle element of the current range as the root.
+Recursively build the left subtree from the left half of the list.
+Recursively build the right subtree from the right half of the list.
+
+Continue until all elements are used.
+Return the newly constructed balanced BST.
+_______________________________________________________
+
+Complexity :
+Time complexity: O(n)
+Space complexity: O(n)
