@@ -1,0 +1,68 @@
+Koko Eating Bananas
+Koko is given an array arr[], where each element represents a pile of bananas. She has exactly k hours to eat all the bananas.
+Each hour, Koko can choose one pile and eat up to s bananas from it.
+If the pile has atleast s bananas, she eats exactly s bananas.
+If the pile has fewer than s bananas, she eats the entire pile in that hour.
+Koko can only eat from one pile per hour.
+
+Your task is to find the minimum value of s (bananas per hour) such that Koko can finish all the piles within k hours.
+________________________________________________________
+
+Code :
+class Solution {
+    public int kokoEat(int[] arr, int k) {
+        int low = 1, high = 0;
+
+        for (int x : arr) {
+            high = Math.max(high, x);
+        }
+
+        int ans = high;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            long hours = 0;
+
+            for (int x : arr) {
+                hours += (x + mid - 1) / mid;
+            }
+
+            if (hours <= k) {
+                ans = mid;
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+
+        return ans;
+    }
+}
+________________________________________________________
+
+Intuition :
+Koko’s eating speed s determines how many hours she needs.
+If s is small, she eats slowly and may exceed k hours.
+If s is large, she eats faster and finishes sooner.
+
+As s increases, the total hours required monotonically decreases.
+This monotonic behavior makes the problem ideal for binary search on the answer (s).
+_______________________________________________________
+
+Approach :
+Define the search space for s:
+Minimum speed = 1
+Maximum speed = maximum pile size in arr[]
+
+Use binary search on this range:
+For a candidate speed mid, compute total hours needed: hours += ceil(arr[i] / mid)
+If total hours ≤ k, the speed is sufficient → try smaller s
+Otherwise, increase s
+Continue until the minimum valid speed is found.
+
+Return that minimum speed.
+________________________________________________________
+
+Complexity :
+Time Complexity: O(n log M)
+Space Complexity: O(1)

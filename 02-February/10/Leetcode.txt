@@ -1,0 +1,59 @@
+3719. Longest Balanced Subarray I
+You are given an integer array nums.
+A subarray is called balanced if the number of distinct even numbers in the subarray is equal to the number of distinct odd numbers.
+Return the length of the longest balanced subarray.
+_______________________________________________________
+
+Code :
+class Solution {
+    private static int[] seen = new int[100001];
+    private static int leet = 0;
+    public int longestBalanced(int[] nums) {
+        leet++; 
+        int n = nums.length;
+        int res = 0;
+
+        for (int i = 0; i < n && n - i > res; i++) {
+            int[] A = new int[2];
+            int marker = (leet << 16) | (i + 1);
+            for (int j = i; j < n; j++) {
+                int val = nums[j];
+                if (seen[val] != marker) {
+                    seen[val] = marker;
+                    A[val & 1]++;
+                }
+
+                if (A[0] == A[1])
+                    res = Math.max(res, j - i + 1);
+            }
+        }
+
+        return res;
+    }
+}
+_______________________________________________________
+
+Intuition
+A subarray is balanced if it contains the same number of distinct even and distinct odd elements. Since we must consider all possible subarrays, a brute-force approach is unavoidable. However, repeatedly creating and clearing hash sets for each starting index introduces unnecessary overhead.
+
+To optimize this, we observe that we only need to know whether a value has already appeared in the current subarray. By using a reusable seen array with iteration markers, we can simulate clearing a set in O(1) time without actually resetting data. This allows us to efficiently track distinct elements while scanning subarrays.
+_______________________________________________________
+
+Approach :
+Use a single global seen array to record whether a value has been encountered in the current subarray.
+For each starting index i, generate a unique marker (i + 1 combined with a global iteration counter).
+
+Traverse the subarray from i to the end:
+If seen[val] does not match the current marker, it is a new distinct value.
+Increment the count of distinct evens or odds based on val & 1.
+Mark seen[val] with the current marker.
+
+If the number of distinct evens equals the number of distinct odds, update the maximum subarray length.
+Use an early stop condition when the remaining elements cannot beat the current best result.
+
+This avoids expensive set clearing and ensures constant-time checks for distinctness.
+________________________________________________________
+
+Complexity :
+Time complexity: O(n^2)
+Space complexity: O(1)
