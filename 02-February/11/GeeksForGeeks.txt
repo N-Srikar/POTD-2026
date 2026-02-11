@@ -1,0 +1,83 @@
+Equalize the Towers
+You are given an array heights[] representing the heights of towers and another array cost[] where each element represents the cost of modifying the height of respective tower.
+
+The goal is to make all towers of same height by either adding or removing blocks from each tower.
+Modifying the height of tower 'i' by 1 unit (add or remove) costs cost[i].
+
+Return the minimum cost to equalize the heights of all the towers.
+_______________________________________________________
+
+Code :
+class Solution {
+    public int minCost(int[] heights, int[] cost) {
+        int n = heights.length;
+
+        int[][] towers = new int[n][2];
+        for (int i = 0; i < n; i++) {
+            towers[i][0] = heights[i];
+            towers[i][1] = cost[i];
+        }
+
+        Arrays.sort(towers, (a, b) -> a[0] - b[0]);
+
+        long totalWeight = 0;
+        for (int i = 0; i < n; i++) {
+            totalWeight += towers[i][1];
+        }
+
+        long cumulative = 0;
+        int median = 0;
+
+        for (int i = 0; i < n; i++) {
+            cumulative += towers[i][1];
+            if (cumulative * 2 >= totalWeight) {
+                median = towers[i][0];
+                break;
+            }
+        }
+
+        long totalCost = 0;
+        for (int i = 0; i < n; i++) {
+            totalCost += (long)Math.abs(towers[i][0] - median) * towers[i][1];
+        }
+
+        return (int) totalCost;
+    }
+}
+_______________________________________________________
+
+Intuition :
+We want to make all towers equal to some height H.
+If we choose a target height H, the total cost becomes: Total Cost(H)=∑ ∣ heights[i]−H ∣ × cost[i]
+
+This is a weighted absolute difference minimization problem.
+
+A key mathematical fact:
+The value of H that minimizes the weighted sum of absolute differences is the weighted median of the heights.
+
+So instead of trying all possible heights, we:
+Sort towers by height.
+Find the weighted median.
+Compute total cost using that height.
+
+This gives the minimum cost.
+_______________________________________________________
+
+Approach :
+Create pairs (height, cost).
+Sort them by height.
+Compute total cost sum.
+
+Find the weighted median:
+Traverse sorted towers.
+Keep accumulating costs.
+The height where cumulative cost ≥ totalCost/2 is the weighted median.
+
+Compute total cost using: sum += abs(height[i] - median) * cost[i]
+
+Return the total cost.
+________________________________________________________
+
+Complexity :
+Time Complexity: O(n log n)
+Space Complexity: O(n)
