@@ -1,0 +1,97 @@
+Max min Height
+Given a garden with n flowers planted in a row, that is represented by an array arr[], where arr[i] denotes the height of the ith flower.You will water them for k days. In one day you can water w continuous flowers. Whenever you water a flower its height increases by 1 unit. You have to maximize the minimum height of all flowers after  k days of watering.
+_______________________________________________________
+
+Code :
+class Solution {
+    public int maxMinHeight(int[] arr, int k, int w) {
+        int n = arr.length;
+        int low = Integer.MAX_VALUE;
+        for (int x : arr) low = Math.min(low, x);
+        int high = low + k;
+        int ans = low;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            if (canAchieve(arr, k, w, mid)) {
+                ans = mid;
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+
+        return ans;
+    }
+
+    private boolean canAchieve(int[] arr, int k, int w, int target) {
+        int n = arr.length;
+        long[] diff = new long[n + 1];
+        long currAdd = 0;
+        long used = 0;
+
+        for (int i = 0; i < n; i++) {
+            currAdd += diff[i];
+            long currentHeight = arr[i] + currAdd;
+
+            if (currentHeight < target) {
+                long need = target - currentHeight;
+                used += need;
+                if (used > k) return false;
+
+                currAdd += need;
+                if (i + w < n) {
+                    diff[i + w] -= need;
+                }
+            }
+        }
+
+        return true;
+    }
+}
+_______________________________________________________
+
+Intuition :
+We want to maximize the minimum height after performing watering operations.
+Each watering operation:
+Increases height of w consecutive flowers by 1
+We can perform at most k operations
+
+If we fix a target minimum height H, the question becomes:
+Can we make every flower's height at least H using at most k operations?
+
+This is a classic binary search on answer problem because:
+If we can achieve height H, then we can also achieve any height < H
+If we cannot achieve H, then we cannot achieve anything larger
+
+This monotonic property allows binary search.
+To efficiently simulate watering, we use a difference array technique to apply range increments in O(1).
+________________________________________________________
+
+Approach :
+Step 1: Binary Search on Target Height
+low = minimum value in arr
+high = minimum value + k
+Binary search on possible minimum height.
+
+Step 2: Check Function (Greedy + Difference Array)
+To check if we can achieve height mid:
+Maintain:
+extra[] → difference array
+currAdd → cumulative increment at position i
+used → operations used so far
+
+Traverse from left to right:
+Apply cumulative additions.
+If arr[i] + currAdd < mid:
+Compute need = mid - (arr[i] + currAdd)
+Increase operations used by need
+If used > k, return false
+Apply range increment using difference array for next w elements.
+
+If traversal completes within k, return true.
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(n log k)
+Space Complexity: O(n)

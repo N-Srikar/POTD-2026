@@ -1,0 +1,70 @@
+3713. Longest Balanced Substring I
+You are given a string s consisting of lowercase English letters.
+A substring of s is called balanced if all distinct characters in the substring appear the same number of times.
+Return the length of the longest balanced substring of s.
+_______________________________________________________
+
+Code :
+class Solution {
+    public int longestBalanced(String s) {
+        int max = 0;
+        int n = s.length();
+        
+        for(int i = 0; i < n; i++){
+            int freq[] = new int[26];
+            
+            for(int j = i; j < n; j++){
+                char ch = s.charAt(j);
+                freq[ch - 'a']++;
+                
+                if(issamefreq(freq)){
+                    max = Math.max(max, j - i + 1);
+                }
+            }
+        }
+        return max;
+    }
+    
+    public static boolean issamefreq(int arr[]){
+        int value = 0;
+        
+        for(int a : arr){
+            if(a == 0) continue;
+            
+            if(value == 0) 
+                value = a;
+            else if(value != a) 
+                return false;
+        }
+        return true;
+    }
+}
+_______________________________________________________
+
+Intuition :
+A substring is balanced if all distinct characters in it appear the same number of times.
+To find the longest such substring, we can generate every possible substring and check whether it satisfies this condition.
+
+For each substring:
+Maintain a frequency array of size 26.
+Ignore characters with zero frequency.
+Ensure all non-zero frequencies are equal.
+
+Since there are only 26 lowercase letters, checking whether frequencies are equal takes constant time.
+_______________________________________________________
+
+Approach :
+Iterate through each index i as the starting point.
+Initialize a frequency array of size 26.
+
+Extend the substring using index j from i to the end:
+Increment the frequency of s[j].
+Check whether all non-zero frequencies are equal.
+
+If valid, update the maximum substring length.
+Return the maximum length found.
+_______________________________________________________
+
+Complexity :
+Time complexity: O(n^2)
+Space complexity: O(1)
