@@ -1,0 +1,154 @@
+3714. Longest Balanced Substring II
+You are given a string s consisting only of the characters 'a', 'b', and 'c'.
+A substring of s is called balanced if all distinct characters in the substring appear the same number of times.
+Return the length of the longest balanced substring of s.
+_______________________________________________________
+
+Code :
+class Solution {
+    public int longestBalanced(String s) {
+        int n = s.length();
+        if (n == 0)
+            return 0;
+
+        char[] arr = s.toCharArray();
+        int ans = 0;
+
+        ans = Math.max(ans, countOne(arr));
+
+        ans = Math.max(ans, countTwo('a', 'b', arr));
+        ans = Math.max(ans, countTwo('b', 'c', arr));
+        ans = Math.max(ans, countTwo('c', 'a', arr));
+
+        ans = Math.max(ans, countThree(arr));
+
+        return ans;
+    }
+
+    private int countOne(char[] arr) {
+        int ans = 0;
+        char curr = arr[0];
+        int count = 0;
+
+        for (char val : arr) {
+            if (val == curr) {
+                count++;
+            } else {
+                curr = val;
+                count = 1;
+            }
+            ans = Math.max(ans, count);
+        }
+        return ans;
+    }
+
+    private int countTwo(char n1, char n2, char[] arr) {
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, -1);
+
+        int sum = 0;
+        int ans = 0;
+
+        for (int i = 0; i < arr.length ; i++) {
+            if (arr[i] == n1) {
+                sum++;
+            } else if (arr[i] == n2) {
+                sum--;
+            } else {
+                map = new HashMap<>();
+                sum = 0;
+                map.put(0, i);
+                continue;
+            }
+
+            if (map.containsKey(sum)) {
+                ans = Math.max(ans, i - map.get(sum));
+            } else {
+                map.put(sum, i);
+            }
+        }
+
+        return ans;
+    }
+
+    private int countThree(char[] arr) {
+        Map<String, Integer> map = new HashMap<>();
+        map.put("0#0", -1);
+
+        int a = 0, b = 0, c = 0;
+        int maxLen = 0;
+
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == 'a')
+                a++;
+            else if (arr[i] == 'b')
+                b++;
+            else
+                c++;
+
+            int diff1 = a - b;
+            int diff2 = a - c;
+
+            String key = diff1 + "#" + diff2;
+
+            if (map.containsKey(key)) {
+                maxLen = Math.max(maxLen, i - map.get(key));
+            } else {
+                map.put(key, i);
+            }
+        }
+
+        return maxLen;
+    }
+}
+_______________________________________________________
+
+Intuition :
+A substring is balanced if all distinct characters inside it appear the same number of times.
+Since the string contains only 'a', 'b', and 'c', there are only three structural possibilities:
+
+The substring contains exactly one distinct character → always balanced.
+The substring contains exactly two distinct characters → their frequencies must be equal.
+The substring contains all three characters → all three frequencies must be equal.
+Instead of checking every substring (which would take O(n^2), we handle these three cases efficiently using prefix techniques.
+_______________________________________________________
+
+Approach :
+Case 1: Single Character
+If a substring contains only one character (e.g., "aaa"), it is automatically balanced.
+We simply scan the string and compute the longest consecutive run of the same character.
+
+Case 2: Exactly Two Distinct Characters
+For two characters (say x and y), a substring is balanced if:
+count(x)=count(y)
+
+We apply a prefix-sum trick similar to the “equal 0s and 1s” problem:
+Add +1 when we see character x
+Add -1 when we see character y
+If we encounter the third character, we reset (since the substring must contain exactly two distinct characters)
+If the same prefix sum appears at two indices, the substring between them has equal counts of x and y.
+
+We check all three possible pairs:
+(a, b)
+(b, c)
+(c, a)
+
+Case 3: All Three Characters
+For three characters, the condition is:
+count(a)=count(b)=count(c)
+
+Instead of checking three equalities directly, we track differences:
+diff1=count(a)−count(b)
+diff2=count(a)−count(c)
+If at two indices the pair (diff1, diff2) is the same, then the substring between them has equal counts of a, b, and c.
+
+We store these difference pairs in a hashmap and compute the maximum valid length.
+Finally, return the maximum among:
+Longest single-character substring
+Longest valid two-character substring
+Longest valid three-character substring
+_______________________________________________________
+
+Complexity :
+Time complexity: O(n)
+Space complexity: O(n)

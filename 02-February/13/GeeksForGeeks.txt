@@ -1,0 +1,73 @@
+All numbers with specific difference
+Given a positive number n and a number d. Find the count of positive numbers smaller or equal to n such that the difference between the number and sum of its digits is greater than or equal to given specific value d.
+_______________________________________________________
+
+Code :
+class Solution {
+
+    public int getCount(int n, int d) {
+        int low = 1, high = n;
+        int firstValid = -1;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+
+            if (mid - digitSum(mid) >= d) {
+                firstValid = mid;
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+
+        if (firstValid == -1) return 0;
+
+        return n - firstValid + 1;
+    }
+
+    private int digitSum(int x) {
+        int sum = 0;
+        while (x > 0) {
+            sum += x % 10;
+            x /= 10;
+        }
+        return sum;
+    }
+}
+_______________________________________________________
+
+Intuition :
+We must count numbers x such that: x−sumOfDigits(x)≥𝑑
+Rewriting: 𝑥≥𝑑 + sumOfDigits(𝑥) x≥d+sumOfDigits(x)
+For any number, sumOfDigits(x) is small compared to x (maximum about 9 × number_of_digits).
+
+Important observation:
+The function f(x) = x - sumOfDigits(x) is non-decreasing as x increases.
+It never decreases sharply.
+So once the condition becomes true for some x, it will remain true for all larger numbers.
+
+That means:
+There exists a smallest number L such that the condition holds.
+All numbers ≥ L up to n will satisfy the condition.
+
+So instead of checking every number, we can:
+Use binary search to find the smallest valid number L.
+Answer = n - L + 1 (if L exists)
+_______________________________________________________
+
+Approach :
+Step 1: Binary Search for smallest valid number
+Search in range [1, n]:
+For mid:
+Compute mid - digitSum(mid)
+If ≥ d → candidate, try smaller
+Else → try larger
+
+Step 2: After binary search
+If no valid number found → return 0
+Else → return n - L + 1
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(log n × log10(n))
+Space Complexity: O(1)
