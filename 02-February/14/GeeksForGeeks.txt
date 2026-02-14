@@ -1,0 +1,85 @@
+The Painter's Partition Problem-II
+Given an array arr[] where each element denotes the length of a board, and an integer k representing the number of painters available. Each painter takes 1 unit of time to paint 1 unit length of a board.
+
+Determine the minimum amount of time required to paint all the boards, under the constraint that each painter can paint only a contiguous sequence of boards (no skipping or splitting allowed).
+_______________________________________________________
+
+Code :
+class Solution {
+    public int minTime(int[] arr, int k) {
+        int n = arr.length;
+
+        int low = 0, high = 0;
+        for (int x : arr) {
+            low = Math.max(low, x);
+            high += x;
+        }
+
+        int ans = high;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+
+            if (canPaint(arr, k, mid)) {
+                ans = mid;
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+
+        return ans;
+    }
+
+    private boolean canPaint(int[] arr, int k, int maxTime) {
+        int painters = 1;
+        int currSum = 0;
+
+        for (int length : arr) {
+            if (currSum + length > maxTime) {
+                painters++;
+                currSum = length;
+                if (painters > k) return false;
+            } else {
+                currSum += length;
+            }
+        }
+
+        return true;
+    }
+}
+_______________________________________________________
+
+Intuition :
+Each painter must paint a contiguous block of boards, and we want to minimize the maximum time taken by any painter.
+
+If we assume a time limit T:
+We can check whether it is possible to assign boards to at most k painters such that no painter paints more than T units.
+
+Important observation:
+If time T is feasible, then any time > T is also feasible.
+If time T is not feasible, any time < T is also not feasible.
+
+This monotonic property makes the problem suitable for binary search on answer.
+_______________________________________________________
+
+Approach :
+Step 1: Define Search Space
+low = max(arr)
+(Minimum possible time must be at least the largest board length.)
+high = sum(arr)
+(Maximum time if only one painter paints everything.)
+
+Step 2: Binary Search
+For a candidate time mid:
+Start assigning boards to painters sequentially.
+Keep accumulating board lengths for the current painter.
+If adding a board exceeds mid, assign a new painter.
+Count how many painters are needed.
+If painters needed ≤ k, then mid is feasible.
+Otherwise, increase time.
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(n log(sum(arr)))
+Space Complexity: O(1)
