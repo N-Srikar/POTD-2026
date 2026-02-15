@@ -1,0 +1,43 @@
+67. Add Binary
+Given two binary strings a and b, return their sum as a binary string.
+_______________________________________________________
+
+Code :
+class Solution {
+    public String addBinary(String a, String b) {
+        StringBuilder result = new StringBuilder();
+        int i = a.length() - 1, j = b.length() - 1, carry = 0;
+        while (i >= 0 || j >= 0 || carry == 1) {
+            int total = carry;
+            if (i >= 0) total += a.charAt(i--) - '0';
+            if (j >= 0) total += b.charAt(j--) - '0';
+            result.append(total % 2);
+            carry = total / 2;
+        }
+        return result.reverse().toString();
+    }
+}
+_______________________________________________________
+
+Intuition :
+Adding two binary strings follows the same idea as adding decimal numbers, but with base 2 instead of base 10.
+At each position, we add the two bits along with any carry from the previous step. If the sum is 2 or 3, we generate a carry for the next position. To make this easy, we process both strings from right to left, starting with the least significant bits.
+_______________________________________________________
+
+Approach :
+Initialize two pointers i and j at the last indices of strings a and b.
+Maintain a carry variable, initially 0.
+
+While there are still digits to process in either string or a carry remains:
+Add the current bits from a and b (if they exist) to carry.
+The current result bit is total % 2.
+Update carry = total / 2.
+
+Append each computed bit to a StringBuilder.
+Reverse the final string since bits were added from least significant to most significant.
+Return the resulting binary string.
+_______________________________________________________
+
+Complexity :
+Time complexity: O(n)
+Space complexity: O(n)
