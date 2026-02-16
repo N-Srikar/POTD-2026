@@ -1,0 +1,46 @@
+190. Reverse Bits
+Reverse bits of a given 32 bits signed integer.
+_______________________________________________________
+
+Code :
+public class Solution {
+    public int reverseBits(int n) {
+        int ans = 0;
+        for (int i = 0; i < 32; i++) {
+            ans <<= 1;
+            ans |= (n & 1);
+            n >>= 1;
+        }
+        return ans;
+    }
+}
+________________________________________________________
+
+Intuition :
+We need to reverse the order of bits in a 32-bit integer.
+This means the least significant bit (LSB) becomes the most significant bit (MSB), and so on.
+
+Instead of converting to a string or using extra storage, we can extract each bit from the input number and build the reversed number step by step using bitwise operations.
+______________________________________________________
+
+Approach :
+Initialize an integer ans = 0.
+Run a loop 32 times (since the integer has 32 bits).
+In each iteration:
+Shift ans left by 1 to make space for the next bit:
+ans <<= 1;
+
+Extract the last bit of n using:
+n & 1
+
+Add that bit to ans:
+ans |= (n & 1);
+
+Shift n right by 1 to process the next bit:
+n >>= 1;
+After 32 iterations, ans will contain the reversed bit sequence.
+_______________________________________________________
+
+Complexity :
+Time complexity: O(1)
+Space complexity: O(1)

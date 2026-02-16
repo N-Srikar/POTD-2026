@@ -1,0 +1,45 @@
+Meeting Rooms
+Given a 2D array arr[][], where arr[i][0] is the starting time of ith meeting and arr[i][1] is the ending time of ith meeting, the task is to check if it is possible for a person to attend all the meetings such that he can attend only one meeting at a particular time.
+
+Note: A person can attend a meeting if its starting time is greater than or equal to the previous meeting's ending time.
+_______________________________________________________
+
+Code :
+class Solution {
+    static boolean canAttend(int[][] arr) {
+        Arrays.sort(arr, (a, b) -> a[0] - b[0]);
+
+        for (int i = 1; i < arr.length; i++) {
+            if (arr[i][0] < arr[i - 1][1]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+_______________________________________________________
+
+Intuition :
+To attend all meetings, no two meetings should overlap.
+If we arrange meetings in order of their starting time, we only need to check:
+Does any meeting start before the previous meeting ends?
+
+If yes → overlap exists → cannot attend all.
+If no → all meetings are non-overlapping → can attend all.
+
+Sorting makes overlap detection straightforward.
+_______________________________________________________
+
+Approach :
+Sort the meetings based on their start time.
+Traverse from the second meeting onward.
+
+For each meeting:
+If arr[i][0] < arr[i-1][1], return false.
+If no overlaps found, return true.
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(n log n)
+Space Complexity: O(1)
