@@ -1,0 +1,76 @@
+Maximum number of overlapping Intervals
+You are given an array of intervals arr[][], where each interval is represented by two integers [start, end] (inclusive). Return the maximum number of intervals that overlap at any point in time.
+_______________________________________________________
+
+Code :
+class Solution {
+    public static int overlapInt(int[][] arr) {
+        int n = arr.length;
+        if (n == 0) return 0;
+
+        int[] start = new int[n];
+        int[] end = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            start[i] = arr[i][0];
+            end[i] = arr[i][1];
+        }
+
+        Arrays.sort(start);
+        Arrays.sort(end);
+
+        int i = 0, j = 0;
+        int currentOverlap = 0;
+        int maxOverlap = 0;
+
+        while (i < n && j < n) {
+            if (start[i] <= end[j]) {
+                currentOverlap++;
+                maxOverlap = Math.max(maxOverlap, currentOverlap);
+                i++;
+            } 
+            else {
+                currentOverlap--;
+                j++;
+            }
+        }
+
+        return maxOverlap;
+    }
+}
+_______________________________________________________
+
+Intuition :
+At any time point, 
+the number of active intervals = intervals that have started but not yet ended.
+
+So instead of checking every point (which is slow), we:
+Treat every start as +1
+Treat every end as “interval finished”
+
+If we process starts and ends in sorted order, we can track how many intervals are active at any moment.
+The maximum active count is the answer.
+______________________________________________________
+
+Approach (Line Sweep Technique) :
+Create two arrays:
+start[] → all start times
+end[] → all end times
+
+Sort both arrays.
+
+Use two pointers:
+If start[i] <= end[j]
+→ A new interval starts before the previous one ends
+→ currentOverlap++
+
+Else
+→ One interval ended
+→ currentOverlap--
+
+Track the maximum value of currentOverlap.
+________________________________________________________
+
+Complexity :
+Time Complexity: O(n log n)
+Space Complexity: O(n)
