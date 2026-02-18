@@ -1,0 +1,41 @@
+693. Binary Number with Alternating Bits
+Given a positive integer, check whether it has alternating bits: namely, if two adjacent bits will always have different values.
+_______________________________________________________
+
+Code :
+class Solution {
+    public boolean hasAlternatingBits(int n) {
+        int x = n ^ (n >> 1);
+        return (x & (x + 1)) == 0;
+    }
+}
+______________________________________________________
+
+Intuition :
+A number has alternating bits if every adjacent pair of bits is different (e.g., 101010).
+If we right-shift such a number by 1 bit, the pattern becomes the exact opposite (e.g., 010101).
+When we XOR the original number with its shifted version:x = n ^ (n >> 1)
+If the bits were perfectly alternating, the result will be a sequence of all 1s (e.g., 111111).
+
+A number consisting of all 1s has a special property:x & (x + 1) == 0
+Why?
+Adding 1 to a sequence of all 1sproduces a power of two (e.g.,111 + 1 = 1000). 
+Performing AND between them gives 0`.
+
+Thus, checking this condition confirms whether the original number had alternating bits.
+_______________________________________________________
+
+Approach :
+Compute:
+x = n ^ (n >> 1)
+
+Check whether x is of the form 111...111 using:
+(x & (x + 1)) == 0
+
+If true → n has alternating bits.
+Otherwise → it does not.
+_______________________________________________________
+
+Complexity :
+Time complexity: O(1)
+Space complexity: O(1)

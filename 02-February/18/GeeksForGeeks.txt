@@ -1,0 +1,87 @@
+Count Inversions
+Given an array of integers arr[]. You have to find the Inversion Count of the array. 
+Note : Inversion count is the number of pairs of elements (i, j) such that i < j and arr[i] > arr[j].
+______________________________________________________
+
+Code :
+class Solution {
+    static int inversionCount(int arr[]) {
+        return mergeSort(arr, 0, arr.length - 1);
+    }
+
+    static int mergeSort(int[] arr, int left, int right) {
+        int count = 0;
+        if (left < right) {
+            int mid = left + (right - left) / 2;
+
+            count += mergeSort(arr, left, mid);
+            count += mergeSort(arr, mid + 1, right);
+            count += merge(arr, left, mid, right);
+        }
+        return count;
+    }
+
+    static int merge(int[] arr, int left, int mid, int right) {
+        int n1 = mid - left + 1;
+        int n2 = right - mid;
+
+        int[] L = new int[n1];
+        int[] R = new int[n2];
+
+        for (int i = 0; i < n1; i++)
+            L[i] = arr[left + i];
+        for (int j = 0; j < n2; j++)
+            R[j] = arr[mid + 1 + j];
+
+        int i = 0, j = 0, k = left;
+        int count = 0;
+
+        while (i < n1 && j < n2) {
+            if (L[i] <= R[j]) {
+                arr[k++] = L[i++];
+            } else {
+                arr[k++] = R[j++];
+                count += (n1 - i);
+            }
+        }
+
+        while (i < n1)
+            arr[k++] = L[i++];
+        while (j < n2)
+            arr[k++] = R[j++];
+
+        return count;
+    }
+}
+_______________________________________________________
+
+Intuition :
+An inversion is a pair (i, j) such that: i < j & arr[i] > arr[j]
+A brute force approach would check all pairs → O(n²), which is too slow for large inputs.
+
+Key observation:
+During Merge Sort, when merging two sorted halves,
+if an element from the right half is placed before an element from the left half,
+then it forms inversions with all remaining elements in the left half.
+
+This allows us to count inversions in O(n log n) time.
+______________________________________________________
+
+Approach :
+Use Merge Sort.
+Recursively divide the array into two halves.
+
+Count:
+Inversions in left half
+Inversions in right half
+Inversions during merge step
+
+During merge:
+If left[i] <= right[j], no inversion.
+If left[i] > right[j], then all elements from i to mid form inversions.
+Add (mid - i + 1) to inversion count.
+________________________________________________________
+
+Complexity :
+Time Complexity: O(n log n)
+Space Complexity: O(n)
