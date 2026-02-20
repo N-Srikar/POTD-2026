@@ -1,0 +1,76 @@
+761. Special Binary String
+Special binary strings are binary strings with the following two properties:
+The number of 0's is equal to the number of 1's.
+Every prefix of the binary string has at least as many 1's as 0's.
+You are given a special binary string s.
+
+A move consists of choosing two consecutive, non-empty, special substrings of s, and swapping them. Two strings are consecutive if the last character of the first string is exactly one index before the first character of the second string.
+
+Return the lexicographically largest resulting string possible after applying the mentioned operations on the string.
+_______________________________________________________
+
+Code :
+class Solution {
+    public String makeLargestSpecial(String s) {
+        int cnt =0;
+        List<String> list = new LinkedList<>();
+        int j=0;
+        for(int i=0;i<s.length();i++)
+        {
+            if(s.charAt(i)=='1')
+                cnt++;
+            else cnt--;
+            if(cnt==0)
+            {
+                list.add('1'+makeLargestSpecial(s.substring(j+1,i))+'0');
+                j= i+1;
+            }
+        }
+        Collections.sort(list,Collections.reverseOrder());
+        return String.join("",list);
+    }
+}
+_______________________________________________________
+
+Intuition :
+A special binary string behaves like a valid parentheses string:
+'1' acts like '('
+'0' acts like ')'
+
+The two properties:
+Equal number of 1s and 0s.
+Every prefix has at least as many 1s as 0s.
+
+This is exactly the definition of a balanced parentheses string.
+Because of this structure, a special string can be decomposed into primitive special substrings.
+Each primitive substring has the form: 1 + (special substring inside) + 0
+
+To make the overall string lexicographically largest:
+We recursively maximize each inner substring.
+Then we sort all primitive substrings in descending lexicographical order.
+Finally, concatenate them.
+
+Why sorting works:
+Since swapping consecutive special substrings is allowed, we can rearrange these primitive blocks freely.
+To maximize lexicographically, we place larger blocks first.
+______________________________________________________
+
+Approach : 
+Traverse the string while maintaining a counter:
+Increment for '1'
+Decrement for '0'
+Whenever the counter becomes 0, we found a primitive special substring.
+
+For each primitive:
+Recursively process the inside portion (excluding outer 1 and 0).
+Wrap it again with 1 and 0.
+
+Store all primitive substrings in a list.
+Sort the list in reverse (descending lexicographical order).
+Join all substrings and return the result.
+This works because any valid rearrangement must occur at the level of these primitive blocks.
+_______________________________________________________
+
+Complexity :
+Time complexity: O(n log n)
+Space complexity: O(n)

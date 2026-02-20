@@ -1,49 +1,47 @@
-Form the Largest Number
-Given an array of integers arr[] representing non-negative integers, arrange them so that after concatenating all of them in order, it results in the largest possible number. Since the result may be very large, return it as a string.
-________________________________________________________
+Missing Element in Range
+Given an array arr[] of integers and a range [low, high], find all the numbers within the range that are not present in the array. return the missing numbers in sorted order.
+_______________________________________________________
 
-Code : 
+Code :
 class Solution {
-    public String findLargest(int[] arr) {
-        String[] nums = new String[arr.length];
+    public ArrayList<Integer> missingRange(int[] arr, int low, int high) {
+        ArrayList<Integer> result = new ArrayList<>();
         
-        for (int i = 0; i < arr.length; i++) {
-            nums[i] = String.valueOf(arr[i]);
+        HashSet<Integer> set = new HashSet<>();
+        for (int num : arr) {
+            set.add(num);
         }
-
-        Arrays.sort(nums, (a, b) -> (b + a).compareTo(a + b));
-
-        if (nums[0].equals("0")) {
-            return "0";
+        
+        for (int i = low; i <= high; i++) {
+            if (!set.contains(i)) {
+                result.add(i);
+            }
         }
-
-        StringBuilder sb = new StringBuilder();
-        for (String num : nums) {
-            sb.append(num);
-        }
-
-        return sb.toString();
+        
+        return result;
     }
 }
 _______________________________________________________
 
 Intuition :
-We need to arrange numbers such that their concatenation forms the largest possible number.
-Normal numeric sorting will not work.
-Whichever concatenation is larger determines the order.
-So instead of sorting numerically, we sort using a custom comparator based on string concatenation.
+We are asked to find all numbers within the range [low, high] that are not present in the given array.
+The simplest way to check whether a number exists in the array efficiently is to use a HashSet, since it provides constant-time lookups on average.
 
-Special case:
-If all numbers are 0, return "0" instead of "000...".
+So the idea is:
+Store all elements of the array in a set.
+Iterate through the entire range [low, high].
+
+Add numbers that are not in the set to the result.
 _______________________________________________________
 
 Approach :
-Convert all integers to strings.
-Sort the array using a comparator: (b + a).compareTo(a + b) (descending order)
-If the first element is "0", return "0".
-Concatenate all strings and return the result.
+Create a HashSet and insert all elements of arr[] into it.
+
+Iterate from low to high (inclusive):
+If the current number is not present in the set, add it to the result list.
+Return the result list.
 _______________________________________________________
 
 Complexity :
-Time Complexity: O(n log n * k)
+Time Complexity: O(n + (high - low + 1))
 Space Complexity: O(n)
