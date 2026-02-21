@@ -1,0 +1,49 @@
+Find H-Index
+You are given an array citations[], where each element citations[i] represents the number of citations received by the ith paper of a researcher. You have to calculate the researcher’s H-index.
+The H-index is defined as the maximum value H, such that the researcher has published at least H papers, and all those papers have citation value greater than or equal to H.
+_______________________________________________________
+
+Code :
+class Solution {
+    public int hIndex(int[] citations) {
+        Arrays.sort(citations);
+        int n = citations.length;
+
+        for (int i = 0; i < n; i++) {
+            int h = n - i;
+            if (citations[i] >= h) {
+                return h;
+            }
+        }
+
+        return 0;
+    }
+}
+_______________________________________________________
+
+Intuition :
+The H-index is the largest number H such that:
+There are at least H papers
+Each of those H papers has at least H citations
+
+So we are looking for the maximum H where:
+number of papers with citations ≥ H ≥ 𝐻
+
+Sorting helps because once citations are in order, we can easily count how many papers meet the condition for each possible H.
+_______________________________________________________
+
+Approach :
+Sort the citations array in ascending order.
+Let n be the number of papers.
+
+Traverse the sorted array:
+For each index i, compute: h = n - i (number of papers from index i to end)
+If citations[i] >= h, then h is a valid H-index.
+Return the first such h encountered.
+
+If no such value found, return 0.
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(n log n)
+Space Complexity: O(1)

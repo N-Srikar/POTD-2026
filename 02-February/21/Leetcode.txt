@@ -1,0 +1,64 @@
+762. Prime Number of Set Bits in Binary Representation
+Given two integers left and right, return the count of numbers in the inclusive range [left, right] having a prime number of set bits in their binary representation.
+Recall that the number of set bits an integer has is the number of 1's present when written in binary.
+______________________________________________________
+
+Code :
+class Solution {
+    public int countPrimeSetBits(int left, int right) {
+        int count=0;
+        
+        for (int i=left;i<=right;i++) {
+            int setBits=Integer.bitCount(i);
+            if (isPrime(setBits)) {
+                count++;
+            }
+        }
+        return count;
+    }
+    
+    private boolean isPrime(int n) {
+        if (n<=1) {
+            return false;
+        }
+        for (int i=2;i*i <= n;i++) {
+            if (n%i==0) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
+________________________________________________________
+
+Intuition :
+For every number in the range [left, right], we need to:
+Count how many 1s appear in its binary representation (number of set bits).
+Check whether that count is a prime number.
+So the problem reduces to filtering numbers based on whether the count of their set bits is prime.
+
+Since the maximum number of bits in an integer is small (at most 32), the number of possible set bits is also small, making the prime check efficient.
+_______________________________________________________
+
+Approach :
+Initialize a counter count = 0.
+Iterate from left to right (inclusive).
+
+For each number:
+Use Integer.bitCount(i) to count the number of set bits.
+Check whether this count is prime using a helper function.
+
+If prime, increment the counter.
+Return the final count.
+
+The isPrime(n) function:
+Return false if n <= 1.
+Check divisibility from 2 to √n.
+If divisible → not prime.
+Otherwise → prime.
+_______________________________________________________
+
+Complexity :
+Time complexity: O((right - left + 1) × √m)
+Space complexity: O(1)
