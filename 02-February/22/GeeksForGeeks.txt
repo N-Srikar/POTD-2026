@@ -1,0 +1,62 @@
+Count Subarrays with given XOR
+Given an array of integers arr[] and a number k, count the number of subarrays having XOR of their elements as k.
+Note: It is guranteed that the total count will fit within a 32-bit integer.
+_______________________________________________________
+
+Code :
+class Solution {
+    public long subarrayXor(int arr[], int k) {
+        
+        HashMap<Integer, Integer> map = new HashMap<>();
+        int prefixXor = 0;
+        long count = 0;
+        
+        for (int num : arr) {
+            prefixXor ^= num;
+            
+            if (prefixXor == k) count++;
+            
+            count += map.getOrDefault(prefixXor ^ k, 0);
+            
+            map.put(prefixXor, map.getOrDefault(prefixXor, 0) + 1);
+        }
+        
+        return count;
+    }
+}
+_______________________________________________________
+
+Intuition :
+We use the concept of prefix XOR.
+For any subarray from index l to r, XOR(l, r) = prefixXor[r] ^ prefixXor[l − 1]
+
+We want this value to be equal to k: prefixXor[r] ^ prefixXor[l − 1] = k
+Rearranging: prefixXor[l − 1] = prefixXor[r] ^ k
+
+This means that while iterating through the array, if we know the current prefix XOR, we just need to check how many times (currentPrefixXor ^ k) has appeared before.
+Each occurrence represents a subarray ending at the current index with XOR = k.
+
+So we:
+Maintain a running prefix XOR
+Store frequencies of prefix XORs in a HashMap
+For each element, add the frequency of (prefixXor ^ k) to the answer
+
+This gives an O(n) solution.
+________________________________________________________
+
+Approach :
+Initialize:
+prefixXor = 0
+count = 0
+HashMap<Integer, Integer> for frequencies
+
+Traverse array:
+prefixXor ^= arr[i]
+If prefixXor == k, increment count
+Add map.getOrDefault(prefixXor ^ k, 0) to count
+Update map with current prefixXor
+________________________________________________________
+
+Complexity :
+Time Complexity : O(n)
+Space Complexity : O(n)
