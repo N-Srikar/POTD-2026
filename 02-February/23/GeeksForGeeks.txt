@@ -1,0 +1,48 @@
+Union of Arrays with Duplicates
+You are given two arrays a[] and b[], return the Union of both the arrays in any order.
+
+The Union of two arrays is a collection of all distinct elements present in either of the arrays. If an element appears more than once in one or both arrays, it should be included only once in the result.
+
+Note: Elements of a[] and b[] are not necessarily distinct.
+Note that, You can return the Union in any order but the driver code will print the result in sorted order only.
+_______________________________________________________
+
+Code :
+class Solution {
+    public static ArrayList<Integer> findUnion(int[] a, int[] b) {
+        HashSet<Integer> set = new HashSet<>();
+
+        for (int x : a) {
+            set.add(x);
+        }
+
+        for (int x : b) {
+            set.add(x);
+        }
+
+        return new ArrayList<>(set);
+    }
+}
+_______________________________________________________
+
+Intuition :
+The union of two arrays consists of all distinct elements that appear in either array.
+Since duplicates must appear only once in the result, we need a structure that:
+Stores unique elements
+Allows fast insertion
+
+A HashSet is ideal because it automatically removes duplicates.
+_______________________________________________________
+
+Approach :
+Create a HashSet<Integer>.
+Insert all elements from array a.
+Insert all elements from array b.
+Duplicates will automatically be ignored.
+Convert the set into an ArrayList.
+Return the list.
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(n + m)
+Space Complexity: O(n + m)

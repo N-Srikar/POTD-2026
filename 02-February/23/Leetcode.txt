@@ -1,0 +1,44 @@
+1461. Check If a String Contains All Binary Codes of Size K
+Given a binary string s and an integer k, return true if every binary code of length k is a substring of s. Otherwise, return false.
+_______________________________________________________
+
+Code :
+class Solution {
+    public boolean hasAllCodes(String s, int k) {
+        HashSet<String> st = new HashSet<>();
+
+        for (int i = 0; i + k <= s.length(); i++) {
+            st.add(s.substring(i, i + k));
+        }
+
+        return st.size() == (int)Math.pow(2, k);
+    }
+}
+________________________________________________________
+
+Intuition :
+A binary string of length k can produce exactly: 2^k different binary codes.
+
+Instead of generating all possible binary codes and checking if each one exists in s, we reverse the logic:
+If we slide a window of size k across s and collect all distinct substrings of length k,
+then s contains all possible binary codes if and only if the number of distinct substrings equals 2^k.
+
+So the problem reduces to counting how many unique substrings of length k appear in s.
+_______________________________________________________
+
+Approach :
+Initialize a HashSet to store unique substrings.
+Traverse s using a sliding window of size k.
+
+For each index i from 0 to s.length() - k:
+Extract substring s.substring(i, i + k).
+Add it to the set.
+
+After processing the string:
+If set.size() == 2^k, return true.
+Otherwise, return false.
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(n × k)
+Space Complexity: O(2^k × k)
