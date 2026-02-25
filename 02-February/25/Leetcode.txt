@@ -1,0 +1,60 @@
+1356. Sort Integers by The Number of 1 Bits
+You are given an integer array arr. Sort the integers in the array in ascending order by the number of 1's in their binary representation and in case of two or more integers have the same number of 1's you have to sort them in ascending order.
+Return the array after sorting it.
+________________________________________________________
+
+Code :
+class Solution {
+    public int[] sortByBits(int[] arr) {
+        int n = arr.length;
+        int res[] = new int[n];
+        for (int i = 0; i < n; i++) {
+            res[i] = countBit(arr[i]) * 10001 + arr[i];
+        }
+        Arrays.sort(res);
+        for (int i = 0; i < n; i++) {
+            res[i] %= 10001;
+        }
+        return res;
+    }
+
+    private int countBit(int n) {
+        int res = 0;
+        while (n != 0) {
+            res += (n & 1);
+            n >>= 1;
+        }
+        return res;
+    }
+}
+_______________________________________________________
+
+Intuition :
+We need to sort numbers based on:
+The number of 1s in their binary representation.
+If two numbers have the same number of set bits, sort them by numeric value.
+
+Instead of writing a custom comparator, we can encode both sorting conditions into a single number.
+
+If we multiply the bit count by a large constant and add the original number: 
+encoded_value = bitCount * 10001 + number
+
+Since the maximum value in the array is ≤ 10000, multiplying by 10001 ensures:
+Numbers are primarily sorted by bit count.
+Ties are automatically broken by the original number.
+After sorting these encoded values, we extract the original numbers using modulo.
+_______________________________________________________
+
+Approach :
+Create a new array res.
+For each number:
+Compute its bit count.
+Store bitCount * 10001 + number in res.
+Sort res.
+Replace each element with res[i] % 10001 to recover the original numbers.
+Return the modified array.
+_______________________________________________________
+
+Complexity :
+Time complexity: O(n log n)
+Space complexity: O(n)

@@ -1,0 +1,68 @@
+Longest Subarray with Majority Greater than K
+Given an array arr[] and an integer k, the task is to find the length of longest subarray in which the count of elements greater than k is more than the count of elements less than or equal to k.
+_______________________________________________________
+
+class Solution {
+    public int longestSubarray(int[] arr, int k) {
+        int sum = 0;
+        int res = 0;
+        HashMap<Integer, Integer> map = new HashMap<>();
+        for(int i=0 ; i<arr.length ; i++){
+            if(arr[i]>k) arr[i]=1;
+            else arr[i]=-1;
+        }
+        for(int i=0 ; i<arr.length ; i++){
+            sum += arr[i];
+            if(sum>0) res = Math.max(res,i+1);
+            if(map.containsKey(sum-1)){
+                res = Math.max(i-map.get(sum-1),res);
+            }
+            if(!map.containsKey(sum)){
+                map.put(sum,i);
+            }
+        }
+        return res;
+    }
+}
+_______________________________________________________
+
+Intuition :
+We want the longest subarray where:
+count of elements > k   >   count of elements ≤ k
+Instead of counting two things separately, we simplify the condition.
+
+Think like this:
+Treat every element greater than k as +1
+Treat every element ≤ k as -1
+
+Now the problem becomes:
+Find the longest subarray whose sum is strictly greater than 0
+
+Because:
+Each +1 represents a “good” element (> k)
+Each -1 represents a “bad” element (≤ k)
+If total sum > 0 → good elements are more than bad ones
+
+So we converted a counting comparison problem into a prefix sum problem.
+_______________________________________________________
+
+Approach :
+First convert the array:
+arr[i] > k → 1
+arr[i] ≤ k → -1
+
+Maintain a running prefix sum sum.
+
+If at index i, sum > 0,
+then the entire subarray from 0 to i is valid.
+So update res = i + 1.
+
+If sum ≤ 0, we need to check whether there was an earlier prefix sum that is exactly one less than current sum.
+
+Use a HashMap to store the first occurrence of every prefix sum.
+Storing the first occurrence ensures we maximize the length.
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(n)
