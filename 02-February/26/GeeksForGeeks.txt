@@ -1,0 +1,64 @@
+Isomorphic Strings
+Given two strings s1 and s2 consisting of only lowercase English letters and of equal length, check if these two strings are isomorphic to each other.
+If the characters in s1 can be changed to get s2, then two strings, s1 and s2 are isomorphic. A character must be completely swapped out for another character while maintaining the order of the characters. A character may map to itself, but no two characters may map to the same character.
+_______________________________________________________
+
+Code :
+class Solution {
+    public boolean areIsomorphic(String s1, String s2) {
+        if (s1.length() != s2.length()) return false;
+
+        int[] map = new int[26];
+        boolean[] used = new boolean[26];
+
+        for (int i = 0; i < s1.length(); i++) {
+            int c1 = s1.charAt(i) - 'a';
+            int c2 = s2.charAt(i) - 'a';
+
+            if (map[c1] == 0) {
+                if (used[c2]) return false;
+                map[c1] = c2 + 1;
+                used[c2] = true;
+            } else {
+                if (map[c1] != c2 + 1) return false;
+            }
+        }
+
+        return true;
+    }
+}
+_______________________________________________________
+
+Intuition :
+Two strings are isomorphic if there exists a one-to-one mapping between characters of s1 and s2.
+Important conditions:
+Each character in s1 must map to exactly one character in s2.
+No two different characters in s1 can map to the same character in s2.
+The order of characters must remain unchanged.
+
+So we must ensure:
+Mapping from s1 → s2
+And also that the mapping is injective (no duplicate targets)
+_______________________________________________________
+
+Approach :
+If lengths differ, return false.
+
+Use two arrays (or maps):
+map1[26] for mapping s1 → s2
+map2[26] to track if a character in s2 is already mapped
+
+Traverse both strings:
+If s1[i] has not been mapped:
+Check if s2[i] is already mapped by some other character → return false
+Establish mapping
+
+Else:
+Check if mapped character matches s2[i]
+If not, return false
+If traversal completes, return true.
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(1)

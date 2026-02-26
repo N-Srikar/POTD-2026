@@ -1,0 +1,70 @@
+1404. Number of Steps to Reduce a Number in Binary Representation to One
+Given the binary representation of an integer as a string s, return the number of steps to reduce it to 1 under the following rules:
+If the current number is even, you have to divide it by 2.
+If the current number is odd, you have to add 1 to it.
+It is guaranteed that you can always reach one for all test cases.
+_______________________________________________________
+
+Code :
+class Solution {
+    public int numSteps(String s) {
+        int steps = 0;
+        int carry = 0;
+        for (int i = s.length() - 1; i > 0; i--) {
+            if (s.charAt(i) - '0' + carry == 1) {
+                carry = 1;
+                steps += 2; 
+            } else {
+                steps += 1;
+            }
+        }
+        return steps + carry;
+    }
+}
+_______________________________________________________
+
+Intuition :
+We simulate the process of reducing a binary number to 1 using the rules:
+If the number is even → divide by 2.
+If the number is odd → add 1.
+Instead of converting the binary string to a number (which could overflow), we work directly on the string from right to left.
+
+Key observation:
+Dividing by 2 in binary means removing the last bit.
+If the number is odd (last bit is 1), we must add 1 first.
+Adding 1 may generate a carry that affects higher bits.
+So we iterate from the least significant bit (rightmost) toward the most significant bit, maintaining a carry that represents whether a previous addition created an overflow.
+_______________________________________________________
+
+Approach :
+Initialize:
+steps = 0
+carry = 0
+Traverse the string from right to left, stopping before index 0 (we stop before the most significant bit).
+
+For each bit:
+Compute current = (bit value) + carry.
+
+If current == 1:
+The number is effectively odd.
+We must:
+Add 1 → 1 step
+Divide by 2 → 1 step
+So, steps += 2
+Set carry = 1
+
+Else (current == 0 or 2):
+The number is even.
+Only division is needed.
+So, steps += 1
+Carry remains unchanged (if 2, it stays 1)
+
+After finishing the loop, add the remaining carry:
+steps += carry
+
+Return steps.
+________________________________________________________
+
+Complexity :
+Time complexity: O(n)
+Space complexity: O(1)
