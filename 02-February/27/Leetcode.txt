@@ -1,0 +1,78 @@
+3666. Minimum Operations to Equalize Binary String
+You are given a binary string s, and an integer k.
+In one operation, you must choose exactly k different indices and flip each '0' to '1' and each '1' to '0'.
+Return the minimum number of operations required to make all characters in the string equal to '1'. If it is not possible, return -1.
+_______________________________________________________
+
+Code :
+class Solution {
+    public int minOperations(String s, int k) {
+        int zero = 0;
+        int len = s.length();
+
+        for (int i = 0; i < len; i++)
+            zero += ~s.charAt(i) & 1;
+
+        if (zero == 0)
+            return 0;
+
+        if (len == k)
+            return ((zero == len ? 1 : 0) << 1) - 1;
+
+        int base = len - k;
+
+        int odd = Math.max(
+            (zero + k - 1) / k,
+            (len - zero + base - 1) / base
+        );
+
+        odd += ~odd & 1;
+
+        int even = Math.max(
+            (zero + k - 1) / k,
+            (zero + base - 1) / base
+        );
+
+        even += even & 1;
+
+        int res = Integer.MAX_VALUE;
+
+        if ((k & 1) == (zero & 1))
+            res = Math.min(res, odd);
+
+        if ((~zero & 1) == 1)
+            res = Math.min(res, even);
+
+        return res == Integer.MAX_VALUE ? -1 : res;
+    }
+}
+_______________________________________________________
+
+Approach :
+Count number of zeros in the string.
+If zero == 0 → already all ones → return 0.
+
+If len == k:
+Only possible to flip entire string.
+If all zeros → one operation.
+Otherwise → impossible.
+
+Otherwise:
+Compute:
+Minimum operations needed to flip all zeros in batches of k.
+Minimum operations needed to balance flips among remaining positions.
+
+Calculate two possibilities:
+odd → minimum odd number of operations satisfying constraints.
+even → minimum even number of operations satisfying constraints.
+
+Check parity feasibility:
+If parity of k matches parity of zero, odd may be valid.
+If parity condition for even holds, even may be valid.
+Return the minimum valid result.
+If neither valid → return -1.
+_______________________________________________________
+
+Complexity :
+Time complexity: O(n)
+Space complexity: O(1)
