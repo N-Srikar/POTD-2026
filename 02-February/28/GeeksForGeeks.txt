@@ -1,0 +1,58 @@
+Find the closest pair from two arrays
+Given two sorted arrays arr1[] and arr2[] of size n and m and a number x, find the pair whose sum is closest to x and the pair has an element from each array. In the case of multiple closest pairs return any one of them.
+______________________________________________________
+
+Code :
+class Solution {
+    public static ArrayList<Integer> findClosestPair(int arr1[], int arr2[], int x) {
+        int n = arr1.length;
+        int m = arr2.length;
+        
+        int i = 0;
+        int j = m - 1;
+        
+        int minDiff = Integer.MAX_VALUE;
+        int res1 = 0, res2 = 0;
+        
+        while (i < n && j >= 0) {
+            int sum = arr1[i] + arr2[j];
+            int diff = Math.abs(sum - x);
+            
+            if (diff < minDiff) {
+                minDiff = diff;
+                res1 = arr1[i];
+                res2 = arr2[j];
+            }
+            
+            if (sum > x) {
+                j--;
+            } else {
+                i++;
+            }
+        }
+        
+        ArrayList<Integer> result = new ArrayList<>();
+        result.add(res1);
+        result.add(res2);
+        
+        return result;
+    }
+}
+_______________________________________________________
+
+Approach : 
+Start:
+i = 0 (beginning of arr1)
+j = arr2.length - 1 (end of arr2)
+
+Compute sum = arr1[i] + arr2[j]
+Track the minimum difference |sum - x|
+If sum > x → move j-- (to reduce sum)
+If sum < x → move i++ (to increase sum)
+
+Continue until one pointer goes out of range
+_______________________________________________________
+
+Complexity :
+Time Complexity : O(n + m)
+Space Complexity : O(1)
