@@ -1,0 +1,29 @@
+1689. Partitioning Into Minimum Number Of Deci-Binary Numbers
+A decimal number is called deci-binary if each of its digits is either 0 or 1 without any leading zeros. For example, 101 and 1100 are deci-binary, while 112 and 3001 are not.
+
+Given a string n that represents a positive decimal integer, return the minimum number of positive deci-binary numbers needed so that they sum up to n.
+______________________________________________________
+
+Code :
+class Solution {
+    public int minPartitions(String n) {
+        int res = 0;
+        for (int i = 0; i < n.length(); i++) {
+            res = Math.max(res, n.charAt(i) - '0');
+        }
+        return res;
+    }
+}
+______________________________________________________
+
+Approach :
+Initialize a variable res = 0.
+Iterate through each character in the string n.
+Convert the character to its integer digit value.
+Update: res = max(res, current_digit)
+Return res.
+_______________________________________________________
+
+Complexity :
+Time complexity: O(n)
+Space complexity: O(1)

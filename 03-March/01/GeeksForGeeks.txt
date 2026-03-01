@@ -1,0 +1,34 @@
+Move All Zeroes to End
+You are given an array arr[] of non-negative integers. You have to move all the zeros in the array to the right end while maintaining the relative order of the non-zero elements. The operation must be performed in place, meaning you should not use extra space for another array.
+_______________________________________________________
+
+Code :
+class Solution {
+    void pushZerosToEnd(int[] arr) {
+        int insertPos = 0;
+
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] != 0) {
+                arr[insertPos++] = arr[i];
+            }
+        }
+
+        while (insertPos < arr.length) {
+            arr[insertPos++] = 0;
+        }
+    }
+}
+_______________________________________________________
+
+Approach : 
+Maintain a pointer insertPos = 0 to track where the next non-zero element should go.
+
+Traverse the array:
+If arr[i] != 0, place it at arr[insertPos] and increment insertPos.
+
+After placing all non-zero elements, fill remaining positions with 0.
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(1)
