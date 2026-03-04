@@ -1,0 +1,51 @@
+Max Xor Subarray of size K
+Given an array of integers arr[]  and a number k. Return the maximum xor of a subarray of size k.
+Note: A subarray is a contiguous part of any given array.
+_______________________________________________________
+
+Code :
+class Solution {
+    public int maxSubarrayXOR(int[] arr, int k) {
+        int n = arr.length;
+        int windowXor = 0;
+
+        for (int i = 0; i < k; i++) {
+            windowXor ^= arr[i];
+        }
+
+        int maxXor = windowXor;
+
+        for (int i = k; i < n; i++) {
+            windowXor ^= arr[i - k];
+            windowXor ^= arr[i];
+            maxXor = Math.max(maxXor, windowXor);
+        }
+
+        return maxXor;
+    }
+}
+_______________________________________________________
+
+Approach :
+Initialize window XOR
+Compute XOR of first k elements → this is the first window.
+
+Store result
+Set maxXor = windowXor.
+
+Slide the window (from index k to n-1)
+Remove the leftmost element using:
+windowXor ^= arr[i - k]
+
+Add the new element using:
+windowXor ^= arr[i]
+
+Update:
+maxXor = max(maxXor, windowXor)
+
+Return maxXor
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(n)
+Space Complexity: O(1)
