@@ -1,0 +1,58 @@
+Smallest window containing all characters
+Given two strings s and p. Find the smallest substring in s consisting of all the characters (including duplicates) of the string p. Return empty string in case no such substring is present.
+If there are multiple such substring of the same length found, return the one with the least starting index.
+_______________________________________________________
+
+Code :
+class Solution {
+    public static String minWindow(String s, String p) {
+        if (s.length() < p.length()) return "";
+        
+        int[] freq = new int[256];
+        for (char c : p.toCharArray()) freq[c]++;
+        
+        int left = 0, count = p.length();
+        int minLen = Integer.MAX_VALUE, start = 0;
+        
+        for (int right = 0; right < s.length(); right++) {
+            if (freq[s.charAt(right)]-- > 0) count--;
+            
+            while (count == 0) {
+                if (right - left + 1 < minLen) {
+                    minLen = right - left + 1;
+                    start = left;
+                }
+                
+                if (++freq[s.charAt(left)] > 0) count++;
+                left++;
+            }
+        }
+        
+        return minLen == Integer.MAX_VALUE ? "" : s.substring(start, start + minLen);
+    }
+}
+_______________________________________________________
+
+Approach :
+Create a frequency array for characters of p.
+Use two pointers left and right to represent a sliding window on s.
+
+Expand the window by moving right:
+Decrease frequency of current character.
+If the character was required, decrement count.
+
+When count == 0, all characters of p are in the window.
+
+Try shrinking the window from the left:
+Update minimum window length.
+Increase frequency of s[left].
+If a required character is removed, increment count.
+
+Continue until the end of s.
+
+Return the smallest valid substring found.
+_______________________________________________________
+
+Complexity :
+Time Complexity: O(n + m)
+Space Complexity: O(1)

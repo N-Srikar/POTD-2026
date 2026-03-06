@@ -1,0 +1,19 @@
+1784. Check if Binary String Has at Most One Segment of Ones
+Given a binary string s ​​​​​without leading zeros, return true​​​ if s contains at most one contiguous segment of ones. Otherwise, return false.
+_______________________________________________________
+
+Code :
+class Solution {
+    public boolean checkOnesSegment(String s) {
+        return !s.contains("01");
+    }
+}
+_______________________________________________________
+
+Approach :
+If 01 appears, it means a 1 segment ended and a new 1 started later (0 in between), so not a single continuous segment.
+_______________________________________________________
+
+Complexity :
+Time complexity : O(N)
+Space complexity : O(1)
