@@ -1,0 +1,48 @@
+Dice throw
+Given n dice each with m faces. Find the number of ways to get sum x which is the summation of values on each face when all the dice are thrown.
+_______________________________________________________
+
+Code :
+class Solution {
+    static int noOfWays(int m, int n, int x) {
+        
+        int[][] dp = new int[n + 1][x + 1];
+        
+        for (int i = 1; i <= m && i <= x; i++) {
+            dp[1][i] = 1;
+        }
+        
+        for (int dice = 2; dice <= n; dice++) {
+            for (int sum = 1; sum <= x; sum++) {
+                for (int face = 1; face <= m && face < sum; face++) {
+                    dp[dice][sum] += dp[dice - 1][sum - face];
+                }
+            }
+        }
+        
+        return dp[n][x];
+    }
+}
+_______________________________________________________
+
+Approach :
+Define DP table
+Let dp[i][j] represent the number of ways to get sum j using i dice.
+
+Initialize base case
+With 1 die, sums 1..m can be obtained in 1 way.
+dp[1][i] = 1 for i = 1..min(m, x).
+
+Fill the DP table
+For each number of dice i = 2..n and each sum j = 1..x:
+Try all face values k = 1..m
+
+If j - k >= 0, add:
+dp[i][j] += dp[i-1][j-k]
+
+Return result
+The required number of ways is: dp[n][x]
+_______________________________________________________
+Complexity :
+Time Complexity : O(n × x × m)
+Space Complexity :  O(n × x)

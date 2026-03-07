@@ -1,0 +1,50 @@
+1888. Minimum Number of Flips to Make the Binary String Alternating
+You are given a binary string s. You are allowed to perform two types of operations on the string in any sequence:
+Type-1: Remove the character at the start of the string s and append it to the end of the string.
+Type-2: Pick any character in s and flip its value, i.e., if its value is '0' it becomes '1' and vice-versa.
+Return the minimum number of type-2 operations you need to perform such that s becomes alternating.
+_______________________________________________________
+
+Code :
+class Solution {
+    public int minFlips(String s) {
+        int n = s.length();
+        int res = n;
+        int[] op = {0, 0};
+
+        for (int i = 0; i < n; i++)
+            op[(s.charAt(i) ^ i) & 1]++;
+
+        for (int i = 0; i < n; i++) {
+            op[(s.charAt(i) ^ i) & 1]--;
+            op[(s.charAt(i) ^ (n + i)) & 1]++;
+            res = Math.min(res, Math.min(op[0], op[1]));
+        }
+
+        return res;
+    }
+}
+_______________________________________________________
+
+Approach :
+Let n be the length of the string.
+
+Track two mismatch counts:
+One for pattern starting with 0 (0101...)
+One for pattern starting with 1 (1010...)
+First compute mismatch counts for the original string.
+
+Then simulate rotations:
+Move the leftmost character out of the window.
+Add the next character at the right side.
+Update mismatch counts accordingly.
+
+For every rotation, compute:
+min(flips_for_pattern0, flips_for_pattern1)
+
+Track the minimum value across all rotations.
+________________________________________________________
+
+Complexity :
+Time complexity: O(n)
+Space complexity: O(1)
