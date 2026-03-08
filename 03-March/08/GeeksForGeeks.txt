@@ -1,0 +1,56 @@
+Pythagorean Triplet
+Given an array arr[], return true if there is a triplet (a, b, c) from the array (where a, b, and c are on different indexes) that satisfies a2 + b2 = c2, otherwise return false.
+_______________________________________________________
+
+Code :
+class Solution {
+    boolean pythagoreanTriplet(int[] arr) {
+        int n = arr.length;
+
+        for (int i = 0; i < n; i++) {
+            arr[i] = arr[i] * arr[i];
+        }
+
+        Arrays.sort(arr);
+
+        for (int i = n - 1; i >= 2; i--) {
+            int left = 0;
+            int right = i - 1;
+
+            while (left < right) {
+                int sum = arr[left] + arr[right];
+
+                if (sum == arr[i]) {
+                    return true;
+                } else if (sum < arr[i]) {
+                    left++;
+                } else {
+                    right--;
+                }
+            }
+        }
+
+        return false;
+    }
+}
+________________________________________________________
+
+Approach :
+Square all elements in the array because the condition is a^2 + b^2 = c^2
+Sort the squared array.
+Fix the largest element as c^2 (iterate from end).
+
+Use two-pointer technique for the remaining part:
+left = 0, right = i-1
+
+Check:
+If arr[left] + arr[right] == arr[i] → triplet found → return true
+If sum < arr[i] → move left++
+If sum > arr[i] → move right--
+
+If no triplet found after loop → return false
+________________________________________________________
+
+Complexity :
+Time Complexity : O(n^2)
+Space Complexity : O(1)

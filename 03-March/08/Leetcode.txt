@@ -1,0 +1,56 @@
+1980. Find Unique Binary String
+Given an array of strings nums containing n unique binary strings each of length n, return a binary string of length n that does not appear in nums. If there are multiple answers, you may return any of them.
+_______________________________________________________
+
+Code :
+class Solution {
+    public String findDifferentBinaryString(String[] nums) {
+        return solve(nums,new StringBuilder(),0);
+    }
+    public String solve(String nums[] , StringBuilder sb , int index){
+        if(index==nums.length){
+            if(!present(sb,nums)) return sb.toString();
+            return "";
+        }
+
+        sb.append('0');
+        String res = solve(nums,sb,index+1);
+        if(!res.equals("")) return res;
+        sb.deleteCharAt(sb.length()-1);
+
+        sb.append('1');
+        res = solve(nums,sb,index+1);
+        if(!res.equals("")) return res;
+        sb.deleteCharAt(sb.length()-1);
+
+        return "";
+    }
+    public boolean present(StringBuilder sb, String nums[]){
+        for(String str:nums){
+            if(sb.toString().equals(str)) return true;
+        }
+        return false;
+    }
+}
+________________________________________________________
+
+Approach :
+Use recursion to build a binary string step by step.
+Maintain a StringBuilder to construct the current candidate string.
+
+At each index:
+Try appending '0' and recurse.
+If a valid answer is found, return it.
+Otherwise remove '0' and try '1'.
+
+When the constructed string reaches length n:
+Check if it exists in the input array.
+If not present, return it.
+
+Backtrack when necessary by removing the last appended character.
+Since at least one binary string of length n must be missing, the recursion will eventually find and return it.
+________________________________________________________
+
+Complexity :
+Time complexity: O(2^n × n)
+Space complexity: O(n)
