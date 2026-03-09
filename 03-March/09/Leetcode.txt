@@ -1,0 +1,68 @@
+3129. Find All Possible Stable Binary Arrays I
+You are given 3 positive integers zero, one, and limit.
+A binary array arr is called stable if:
+The number of occurrences of 0 in arr is exactly zero.
+The number of occurrences of 1 in arr is exactly one.
+Each subarray of arr with a size greater than limit must contain both 0 and 1.
+
+Return the total number of stable binary arrays.
+_______________________________________________________
+
+Code :
+class Solution {
+    public int numberOfStableArrays(int zero, int one, int limit) {
+        final int mod = 1_000_000_007;
+
+        int[][] dp0 = new int[zero + 1][one + 1];
+        int[][] dp1 = new int[zero + 1][one + 1]; 
+
+        for (int i = 1; i <= Math.min(zero, limit); ++i) dp0[i][0] = 1;
+        for (int j = 1; j <= Math.min(one, limit); ++j) dp1[0][j] = 1;
+
+        for (int i = 1; i <= zero; ++i) {
+            for (int j = 1; j <= one; ++j) {
+                for (int k = 1; k <= Math.min(limit, i); ++k)
+                    dp0[i][j] = (dp0[i][j] + dp1[i - k][j]) % mod;
+                for (int k = 1; k <= Math.min(limit, j); ++k)
+                    dp1[i][j] = (dp1[i][j] + dp0[i][j - k]) % mod;
+            }
+        }
+
+        return (dp0[zero][one] + dp1[zero][one]) % mod;
+    }
+}
+_______________________________________________________
+
+
+Approach
+Use dynamic programming with two states:
+dp0[i][j] → number of valid arrays using i zeros and j ones that end with 0
+dp1[i][j] → number of valid arrays using i zeros and j ones that end with 1
+
+Initialization
+If the array consists only of zeros, it is valid only if their count ≤ limit.
+Similarly for ones.
+So:
+dp0[i][0] = 1 for 1 ≤ i ≤ limit
+dp1[0][j] = 1 for 1 ≤ j ≤ limit
+
+Transition
+To end with 0:
+Append k zeros (1 ≤ k ≤ limit)
+Previous element must be 1
+So we add:
+dp1[i-k][j]
+
+To end with 1:
+Append k ones (1 ≤ k ≤ limit)
+Previous element must be 0
+So we add: dp0[i][j-k]
+All computations are done modulo 10^9 + 7.
+
+Final Result
+The total number of stable arrays is: dp0[zero][one] + dp1[zero][one]
+_______________________________________________________
+
+Complexity :
+Time complexity: O(zero × one × limit)
+Space complexity: O(zero × one)

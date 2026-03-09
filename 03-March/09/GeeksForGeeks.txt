@@ -1,0 +1,55 @@
+Largest number in one swap
+Given a string s, return the lexicographically largest string that can be obtained by swapping at most one pair of characters in s.
+_______________________________________________________
+
+Code :
+class Solution {
+    public String largestSwap(String s) {
+        char[] arr = s.toCharArray();
+        int n = arr.length;
+
+        int[] lastPos = new int[10];
+        for (int i = 0; i < n; i++) {
+            lastPos[arr[i] - '0'] = i;
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int d = 9; d > arr[i] - '0'; d--) {
+                if (lastPos[d] > i) {
+                    char temp = arr[i];
+                    arr[i] = arr[lastPos[d]];
+                    arr[lastPos[d]] = temp;
+                    return new String(arr); 
+                }
+            }
+        }
+        return s;
+    }
+}
+_______________________________________________________
+
+Approach :
+Convert string to char array
+This allows easy swapping of characters.
+
+Store last occurrence of each digit (0–9)
+Create an array lastPos[10].
+Traverse the string and record the last index where each digit appears.
+
+Traverse the string from left to right
+For each position i, check if a larger digit than arr[i] exists later in the string.
+
+Check digits from 9 down to current digit + 1
+If lastPos[d] > i, it means a larger digit d occurs later.
+Swap arr[i] with arr[lastPos[d]].
+
+Return immediately after first swap
+Swapping at the leftmost possible position with the largest possible digit gives the lexicographically largest result.
+
+If no swap is possible
+Return the original string.
+______________________________________________________
+
+Complexity :
+Time Complexity : O(n)
+Space Complexity : O(1)
