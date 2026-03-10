@@ -1,0 +1,42 @@
+Subarrays with First Element Minimum
+You are given an integer array arr[ ]. Your task is to count the number of subarrays where the first element is the minimum element of that subarray.
+Note: A subarray is valid if its first element is not greater than any other element in that subarray.
+_______________________________________________________
+
+Code :
+class Solution {
+    public int countSubarrays(int[] arr) {
+        int n = arr.length;
+        Stack<Integer> st = new Stack<>();
+        long ans = 0;
+
+        for (int i = 0; i < n; i++) {
+            while (!st.isEmpty() && arr[i] < arr[st.peek()]) {
+                int idx = st.pop();
+                ans += i - idx;
+            }
+            st.push(i);
+        }
+
+        while (!st.isEmpty()) {
+            int idx = st.pop();
+            ans += n - idx;
+        }
+
+        return (int) ans;
+    }
+}
+_______________________________________________________
+
+Approach :
+For each index i, find the next smaller element to the right.
+If the next smaller element index is j, any subarray starting at i must end before j.
+Use a monotonic increasing stack to compute this efficiently.
+Number of valid subarrays starting at i = nextSmallerIndex - i.
+If no smaller element exists, use n.
+Sum counts for all i.
+_______________________________________________________
+
+Complexity : 
+Time Complexity: O(n)
+Space Complexity: O(n)
