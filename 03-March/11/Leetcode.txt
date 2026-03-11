@@ -1,0 +1,44 @@
+1009. Complement of Base 10 Integer
+The complement of an integer is the integer you get when you flip all the 0's to 1's and all the 1's to 0's in its binary representation.
+Given an integer n, return its complement.
+_______________________________________________________
+
+Code :
+class Solution {
+    public int bitwiseComplement(int n) {
+        if(n == 0) return 1;
+        int res = 0;
+        int fac = 1;
+        
+        while(n != 0){
+            res += fac * (n % 2 == 0 ? 1 : 0);
+            fac *= 2;
+            n /= 2;
+        }
+        return res;
+    }
+}
+_______________________________________________________
+
+Approach :
+Handle the edge case:
+If n == 0, return 1.
+
+Initialize:
+res = 0 → result number
+fac = 1 → represents the current power of 2
+
+While n > 0:
+Extract the last bit using n % 2.
+If the bit is 0, add fac to the result (since complement becomes 1).
+If the bit is 1, add nothing (since complement becomes 0).
+Move to the next bit:
+n /= 2
+fac *= 2
+
+Return the constructed result.
+________________________________________________________
+
+Complexity :
+Time complexity: O(log n)
+Space complexity: O(1)
