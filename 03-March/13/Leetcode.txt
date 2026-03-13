@@ -1,0 +1,63 @@
+3296. Minimum Number of Seconds to Make Mountain Height Zero
+You are given an integer mountainHeight denoting the height of a mountain.
+You are also given an integer array workerTimes representing the work time of workers in seconds.
+The workers work simultaneously to reduce the height of the mountain. For worker i:
+To decrease the mountain's height by x, it takes workerTimes[i] + workerTimes[i] * 2 + ... + workerTimes[i] * x seconds
+Return an integer representing the minimum number of seconds required for the workers to make the height of the mountain 0.
+_______________________________________________________
+
+Code :
+class Solution {
+    public long minNumberOfSeconds(int mountainHeight, int[] workerTimes) {
+        long low = 1, high = (long) 1e18, result = high;
+        
+        while (low <= high) {
+            long mid = (low + high) / 2;
+            
+            if (canReduceMountain(mountainHeight, workerTimes, mid)) {
+                result = mid;
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+        
+        return result;
+    }
+    
+    private boolean canReduceMountain(int mountainHeight, int[] workerTimes, long maxTime) {
+        long totalReduction = 0;
+        
+        for (int time : workerTimes) {
+            long low = 1, high = mountainHeight;
+            
+            while (low <= high) {
+                long mid = (low + high) / 2;
+                long cost = (mid * (mid + 1)) / 2 * time;
+                
+                if (cost <= maxTime) {
+                    low = mid + 1;
+                } else {
+                    high = mid - 1;
+                }
+            }
+            
+            totalReduction += high;
+            if (totalReduction >= mountainHeight) {
+                return true;
+            }
+        }
+        
+        return totalReduction >= mountainHeight;
+    }
+}
+_______________________________________________________
+
+Approach :
+Use binary search to find the smallest time where the total reduction from workers meets or exceeds the mountain height.
+For each midpoint in the binary search, check if the workers can collectively achieve the required height reduction within that time using another binary search.
+_______________________________________________________
+
+Complexity :
+Time complexity: O(nlogh)
+Space complexity: O(1) 
