@@ -1,0 +1,35 @@
+Course Schedule I
+You are given n courses, labeled from 0 to n - 1 and a 2d array prerequisites[][] where prerequisites[i] = [x, y] indicates that we need to take course y first if we want to take course x.
+
+Find if it is possible to complete all tasks. Return true if all tasks can be completed, or false if it is impossible.
+_______________________________________________________
+
+Code :
+class Solution {
+    public boolean canFinish(int n, int[][] prerequisites) {
+        List<List<Integer>> adj = new ArrayList<>();
+        for (int i = 0; i < n; i++) adj.add(new ArrayList<>());
+        int[] indegree = new int[n];
+        
+        for (int[] p : prerequisites) {
+            adj.get(p[1]).add(p[0]);
+            indegree[p[0]]++;
+        }
+        
+        Queue<Integer> q = new LinkedList<>();
+        for (int i = 0; i < n; i++) {
+            if (indegree[i] == 0) q.offer(i);
+        }
+        
+        int count = 0;
+        while (!q.isEmpty()) {
+            int node = q.poll();
+            count++;
+            for (int nei : adj.get(node)) {
+                if (--indegree[nei] == 0) q.offer(nei);
+            }
+        }
+        
+        return count == n;
+    }
+}
